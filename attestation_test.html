@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Аттестация — EasyCode Сервис</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Onest:wght@300;400;500;600&display=swap');
+:root{
+  --bg:#0d0f14;--surface:#161920;--surface2:#1e2229;--border:#2a2f3a;
+  --accent:#5b7fff;--accent2:#ff6b6b;--accent3:#43d99e;--accent4:#ffd166;
+  --text:#e8eaf0;--muted:#7a8099;--radius:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Onest',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+#screen-password{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 20px;text-align:center}
+.pw-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:36px 32px;max-width:380px;width:100%}
+.pw-box h2{font-family:'Unbounded',sans-serif;font-size:17px;font-weight:900;margin-bottom:8px}
+.pw-box p{font-size:14px;color:var(--muted);margin-bottom:24px;line-height:1.5}
+.pw-error{color:var(--accent2);font-size:13px;margin-top:10px;min-height:18px}
+#screen-register{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 20px;text-align:center}
+.badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);background:rgba(91,127,255,.1);border:1px solid rgba(91,127,255,.25);padding:5px 18px;border-radius:100px;margin-bottom:24px}
+h1{font-family:'Unbounded',sans-serif;font-size:clamp(24px,4vw,44px);font-weight:900;line-height:1.1;margin-bottom:16px;background:linear-gradient(135deg,#fff 30%,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.subtitle{color:var(--muted);font-size:15px;max-width:480px;margin:0 auto 36px}
+.meta-grid{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-bottom:40px}
+.meta-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 22px;text-align:center}
+.meta-card .num{font-family:'Unbounded',sans-serif;font-size:26px;font-weight:900;color:var(--accent)}
+.meta-card .label{font-size:12px;color:var(--muted);margin-top:4px}
+
+.reg-form{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;max-width:420px;width:100%;text-align:left;margin-bottom:28px}
+.reg-form h2{font-family:'Unbounded',sans-serif;font-size:16px;font-weight:700;margin-bottom:24px;text-align:center;color:var(--text)}
+.field{margin-bottom:18px}
+.field label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:7px;letter-spacing:.5px;text-transform:uppercase}
+.field input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;font-family:'Onest',sans-serif;font-size:15px;color:var(--text);outline:none;transition:border-color .2s}
+.field input:focus{border-color:var(--accent)}
+.field input::placeholder{color:var(--muted)}
+.field-hint{font-size:12px;color:var(--muted);margin-top:5px}
+
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#fff;font-family:'Onest',sans-serif;font-size:16px;font-weight:600;padding:14px 36px;border-radius:100px;border:none;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(91,127,255,.35)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.btn.secondary{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+.btn.secondary:hover{box-shadow:0 8px 24px rgba(0,0,0,.3)}
+
+#screen-question{display:none;min-height:100vh}
+.q-layout{display:grid;grid-template-rows:auto 1fr auto;min-height:100vh}
+.q-header{padding:16px 32px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.user-chip{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:6px 14px;font-size:13px;color:var(--muted)}
+.user-chip strong{color:var(--text);font-weight:600}
+.progress-wrap{flex:1;min-width:180px}
+.progress-label{font-size:12px;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between}
+.progress-bar{height:4px;background:var(--border);border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;background:var(--accent);border-radius:4px;transition:width .4s ease}
+.block-badge{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:4px 12px;border-radius:100px;background:rgba(91,127,255,.1);color:var(--accent);border:1px solid rgba(91,127,255,.2);white-space:nowrap}
+.timer-wrap{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:6px 16px}
+.timer-val{font-family:'Unbounded',sans-serif;font-size:14px;font-weight:700;color:var(--text);min-width:52px;text-align:center}
+.timer-val.warn{color:var(--accent4)}.timer-val.danger{color:var(--accent2)}
+.q-body{padding:40px 32px;max-width:780px;margin:0 auto;width:100%;display:flex;flex-direction:column;justify-content:center}
+.q-number{font-family:'Unbounded',sans-serif;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:2px;margin-bottom:14px}
+.q-text{font-size:clamp(17px,2.2vw,22px);font-weight:500;line-height:1.5;margin-bottom:28px}
+.options{display:flex;flex-direction:column;gap:10px}
+.opt{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:15px 20px;cursor:pointer;font-size:15px;text-align:left;color:var(--text);transition:border-color .15s,background .15s;width:100%;font-family:'Onest',sans-serif}
+.opt:hover{border-color:rgba(91,127,255,.5);background:var(--surface2)}
+.opt.selected{border-color:var(--accent);background:rgba(91,127,255,.1)}
+.open-answer{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;font-family:'Onest',sans-serif;font-size:15px;color:var(--text);resize:vertical;min-height:110px;outline:none;transition:border-color .2s;line-height:1.6}
+.open-answer:focus{border-color:var(--accent)}
+.open-answer::placeholder{color:var(--muted)}
+.q-footer{padding:16px 32px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:16px}
+.skip-btn{background:none;border:none;color:var(--muted);font-family:'Onest',sans-serif;font-size:14px;cursor:pointer;padding:8px 0;text-decoration:underline;text-underline-offset:3px}
+.skip-btn:hover{color:var(--text)}
+
+#screen-result{display:none;min-height:100vh;padding:60px 20px;text-align:center}
+.result-inner{max-width:720px;margin:0 auto}
+.score-circle{width:150px;height:150px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 32px;border:3px solid var(--accent)}
+.score-num{font-family:'Unbounded',sans-serif;font-size:40px;font-weight:900;color:var(--accent)}
+.score-label{font-size:12px;color:var(--muted);margin-top:2px}
+.result-title{font-family:'Unbounded',sans-serif;font-size:clamp(20px,3vw,32px);font-weight:900;margin-bottom:12px}
+.result-sub{color:var(--muted);font-size:15px;margin-bottom:40px}
+.stats-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:16px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 24px}
+.stat-card .snum{font-family:'Unbounded',sans-serif;font-size:26px;font-weight:900}
+.stat-card .slabel{font-size:12px;color:var(--muted);margin-top:4px}
+.time-spent{color:var(--muted);font-size:14px;margin-bottom:16px}
+.save-status{font-size:13px;color:var(--accent3);margin-bottom:28px;padding:10px 20px;background:rgba(67,217,158,.08);border:1px solid rgba(67,217,158,.2);border-radius:100px;display:inline-block}
+.save-status.error{color:var(--accent2);background:rgba(255,107,107,.08);border-color:rgba(255,107,107,.2)}
+.green{color:var(--accent3)}.red{color:var(--accent2)}.yellow{color:var(--accent4)}
+.btn-row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+
+#screen-review{display:none;padding:40px 20px 80px}
+.review-inner{max-width:780px;margin:0 auto}
+.review-head{display:flex;align-items:center;gap:16px;margin-bottom:32px;flex-wrap:wrap}
+.review-title{font-family:'Unbounded',sans-serif;font-size:22px;font-weight:900}
+.review-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 22px;margin-bottom:14px}
+.review-item.r-correct{border-left:3px solid var(--accent3)}
+.review-item.r-open{border-left:3px solid var(--accent)}
+.review-item.r-wrong{border-left:3px solid var(--accent2)}
+.r-block{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.r-q{font-size:15px;font-weight:500;margin-bottom:10px;line-height:1.5}
+.r-user-label{font-size:12px;color:var(--muted);margin-bottom:3px}
+.r-user-val{font-size:14px;color:var(--text);background:var(--surface2);border-radius:8px;padding:8px 12px;margin-bottom:10px}
+.r-answer-label{font-size:12px;color:var(--accent3);margin-bottom:3px;font-weight:600}
+.r-answer-val{font-size:14px;color:#b8ffd8;background:rgba(67,217,158,.06);border-radius:8px;padding:8px 12px;border:1px solid rgba(67,217,158,.15)}
+.r-skipped{font-size:14px;color:var(--accent2);font-style:italic}
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+.filter-btn{font-size:12px;padding:5px 14px;border-radius:100px;border:1px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;font-family:'Onest',sans-serif;transition:all .15s}
+.filter-btn.active,.filter-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(91,127,255,.08)}
+@media(max-width:600px){
+  .q-header,.q-body,.q-footer{padding-left:16px;padding-right:16px}
+  .q-body{padding-top:24px;padding-bottom:24px}
+}
+</style>
+</head>
+<body>
+
+<!-- ПАРОЛЬ -->
+<div id="screen-password">
+  <div class="badge">EasyCode · Аттестация</div>
+  <h1 style="margin-bottom:32px">Вход для сотрудников</h1>
+  <div class="pw-box">
+    <h2>🔒 Введите пароль</h2>
+    <p>Пароль выдаётся руководителем перед прохождением аттестации</p>
+    <div class="field">
+      <input type="password" id="pw-inp" placeholder="Введите пароль..." onkeydown="if(event.key==='Enter')checkPassword()" />
+    </div>
+    <button class="btn" style="width:100%;justify-content:center" onclick="checkPassword()">Войти →</button>
+    <div class="pw-error" id="pw-error"></div>
+  </div>
+</div>
+
+<!-- РЕГИСТРАЦИЯ -->
+<div id="screen-register" style="display:none">
+  <div class="badge">Аттестация сотрудников</div>
+  <h1>Регламент сервиса EasyCode</h1>
+  <p class="subtitle">CRM · Отделы · Передача диалогов · Практические кейсы</p>
+  <div class="meta-grid">
+    <div class="meta-card"><div class="num">77</div><div class="label">вопросов</div></div>
+    <div class="meta-card"><div class="num">12</div><div class="label">блоков</div></div>
+    <div class="meta-card"><div class="num">~40</div><div class="label">минут</div></div>
+  </div>
+  <div class="reg-form">
+    <h2>Заполните перед началом</h2>
+    <div class="field">
+      <label>Ваше имя и фамилия</label>
+      <input type="text" id="inp-name" placeholder="Иван Иванов" />
+    </div>
+    <div class="field">
+      <label>Telegram-логин</label>
+      <input type="text" id="inp-tg" placeholder="@username" />
+      <div class="field-hint">Введите @логин — он используется для идентификации</div>
+    </div>
+    <div class="field">
+      <label>Отдел</label>
+      <input type="text" id="inp-dept" placeholder="Забота КС, Онбординг..." />
+    </div>
+  </div>
+  <button class="btn" onclick="beginQuiz()" id="btn-start">▶ Начать аттестацию</button>
+</div>
+
+<!-- ВОПРОС -->
+<div id="screen-question">
+  <div class="q-layout">
+    <div class="q-header">
+      <div class="user-chip">👤 <strong id="header-name"></strong> · <span id="header-tg" style="color:var(--accent)"></span></div>
+      <div class="progress-wrap">
+        <div class="progress-label">
+          <span id="prog-text">Вопрос 1 из 77</span>
+          <span id="prog-pct">0%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+      </div>
+      <div class="block-badge" id="block-badge"></div>
+      <div class="timer-wrap">
+        <span style="font-size:16px">⏱</span>
+        <span class="timer-val" id="timer-val">00:00</span>
+      </div>
+    </div>
+    <div class="q-body">
+      <div class="q-number" id="q-number"></div>
+      <div class="q-text" id="q-text"></div>
+      <div id="q-input"></div>
+    </div>
+    <div class="q-footer">
+      <button class="skip-btn" onclick="skipQuestion()">Пропустить →</button>
+      <button class="btn" id="btn-next" onclick="submitAnswer()">Ответить</button>
+    </div>
+  </div>
+</div>
+
+<!-- РЕЗУЛЬТАТ -->
+<div id="screen-result">
+  <div class="result-inner">
+    <div class="score-circle">
+      <div class="score-num" id="res-pct">—</div>
+      <div class="score-label">результат</div>
+    </div>
+    <div class="result-title" id="res-title"></div>
+    <div class="result-sub" id="res-sub"></div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="snum green" id="res-correct">0</div><div class="slabel">верных</div></div>
+      <div class="stat-card"><div class="snum red" id="res-wrong">0</div><div class="slabel">ошибок</div></div>
+      <div class="stat-card"><div class="snum yellow" id="res-open">0</div><div class="slabel">открытых</div></div>
+      <div class="stat-card"><div class="snum" style="color:var(--muted)" id="res-skip">0</div><div class="slabel">пропущено</div></div>
+    </div>
+    <div class="time-spent" id="res-time"></div>
+    <div id="save-status-wrap"></div>
+    <div class="btn-row">
+      <button class="btn" onclick="showReview()">📋 Разбор ответов</button>
+      <button class="btn secondary" onclick="restartQuiz()">↺ Пройти заново</button>
+    </div>
+  </div>
+</div>
+
+<!-- ОБЗОР -->
+<div id="screen-review">
+  <div class="review-inner">
+    <div class="review-head">
+      <button class="btn secondary" onclick="backToResult()" style="padding:10px 20px;font-size:14px">← Назад</button>
+      <div class="review-title">Разбор ответов</div>
+    </div>
+    <div class="filter-bar" id="filter-bar"></div>
+    <div id="review-list"></div>
+  </div>
+</div>
+
+<script>
+const Q = [
+  {b:"CRM",t:"choice",q:"Как называется поле в CRM, которое определяет отдел, в который нужно перевести клиента?",opts:["Группа менеджеров","Тип менеджерской группы","Статус клиента","Комментарий для передачи"],c:1,a:"Тип менеджерской группы — именно это поле определяет отдел"},
+  {b:"CRM",t:"choice",q:"Что автоматически происходит с полем «Группа менеджеров» при смене «Типа менеджерской группы»?",opts:["Ничего — нужно менять вручную","Меняется автоматически на группу нужного отдела","Обнуляется","Блокируется до подтверждения руководителя"],c:1,a:"Группа менеджеров меняется автоматически при смене типа"},
+  {b:"CRM",t:"choice",q:"Где можно посмотреть историю изменений полей «Тип менеджерской группы» и «Комментарий для передачи»?",opts:["В разделе Заказы","В Истории изменений карточки клиента","В Yougile","В Telegram-чате отдела"],c:1,a:"История изменений — раздел внутри карточки клиента в CRM"},
+  {b:"CRM",t:"choice",q:"Какое максимально допустимое время ответа клиенту во всех системах?",opts:["5 минут","10 минут","15 минут","30 минут"],c:2,a:"15 минут — единый стандарт для CRM, Telegram и ВКонтакте"},
+  {b:"CRM",t:"choice",q:"Что нужно сделать с полем «Комментарий для передачи» после завершения работы с диалогом?",opts:["Оставить для истории","Удалить","Передать следующему менеджеру","Зафиксировать в Yougile"],c:1,a:"Комментарий для передачи удаляется после завершения работы с диалогом"},
+  {b:"CRM",t:"choice",q:"Какой тип менеджерской группы стоит у клиента до первого урока?",opts:["Забота КС","Онбординг","Формирование","Расписание КС"],c:1,a:"До первого урока — Онбординг. После первого урока — Забота КС"},
+  {b:"CRM",t:"open",q:"Назовите минимум два раздела CRM, где можно найти клиентов конкретного менеджера.",a:"Страница диалогов, страница Клиенты (managers-customers), страница Заказы (managers-orders)"},
+  {b:"CRM",t:"choice",q:"Когда нужно ставить дату «Следующего контакта» на сегодняшнее число?",opts:["Всегда","Только когда клиент просит","Когда вопрос нужно решить сегодня","Когда вопрос нужно решить завтра"],c:2,a:"Если вопрос нужно решить сегодня — ставим сегодняшнее число"},
+  {b:"CRM",t:"open",q:"Что обязательно нужно ставить при постановке любого бесплатного урока или урока репетиторства в CRM?",a:"Дату окончания курса — иначе CRM неверно считывает урок"},
+  {b:"CRM",t:"choice",q:"Сколько раз в неделю разрешено ставить занятия клиентам EasyCode 2.0?",opts:["Один раз","Два раза","Три раза","По желанию клиента"],c:0,a:"Клиентам EasyCode 2.0 занятия ставятся строго один раз в неделю"},
+  {b:"CRM",t:"open",q:"Что нужно проверить у клиента перед тем, как решить, в какой отдел монетизации его перевести?",a:"Тип оплаты клиента (рассрочка, помесячная, разовая и т.д.)"},
+  {b:"CRM",t:"open",q:"Почему диалог в CRM не должен оставаться без ответа менеджера?",a:"Нарушается SLA — время ответа клиенту. Менеджер всегда должен завершать диалог своим сообщением"},
+  {b:"Онбординг",t:"open",q:"Опишите зону ответственности отдела онбординга: за что они отвечают от начала до конца?",a:"Полный цикл интеграции нового клиента: первый контакт после покупки, формирование групп, назначение преподавателей, оформление документов (договоры, МК, справки), назначение репетиторства и наставничества"},
+  {b:"Онбординг",t:"choice",q:"За сколько дней онбординг должен сформировать и запустить учебную группу?",opts:["7 дней","10 дней","14 дней","21 день"],c:2,a:"Максимум 14 дней, среднее наполнение — 13 учеников"},
+  {b:"Онбординг",t:"choice",q:"Какой целевой показатель удержания клиентов ставит отдел онбординга?",opts:["30%","45%","60%","75%"],c:1,a:"Не менее 45% клиентов, совершивших покупку"},
+  {b:"Онбординг",t:"open",q:"Какие документы оформляет отдел онбординга? Назовите не менее трёх.",a:"Индивидуальные договоры, документы на материнский капитал, акты оказанных услуг, справки для налогового вычета, НДФЛ"},
+  {b:"Онбординг",t:"open",q:"По каким вопросам нужно переводить клиента на онбординг? Назовите не менее четырёх случаев.",a:"До старта обучения (до первого урока), вопросы инд. договора, налогового вычета, НДФЛ, материнского капитала, заявки на возврат до старта, отсутствие тега «Забота» после первого урока"},
+  {b:"Онбординг",t:"choice",q:"Клиент купил курс, ещё не прошёл первый урок и спрашивает про материнский капитал. Куда переводить?",opts:["Забота КС","Онбординг","Возвраты","Монетизация"],c:1,a:"Онбординг — до первого урока они занимаются в том числе документами по МК"},
+  {b:"Техподдержка",t:"open",q:"В каких случаях клиента нужно переводить в техподдержку? Назовите конкретные ситуации.",a:"Проблемы с подключением к уроку, вопросы по ссылке на урок, технические проблемы во время занятия, проблемы с платформой или оборудованием"},
+  {b:"Техподдержка",t:"open",q:"В какой чат нужно передавать запросы технического характера от других отделов?",a:"Чат «Техподдержка» в Telegram"},
+  {b:"Техподдержка",t:"open",q:"Где хранится база знаний технического отдела с ошибками и инструкциями?",a:"В Teamly: s1-easycode.teamly.ru — раздел «Методические материалы Тех. отдела»"},
+  {b:"Техподдержка",t:"choice",q:"Клиент написал в 21:30 — технические проблемы прямо сейчас на уроке. Что делаете?",opts:["Решаете сами, не переводите","Переводите в техподдержку и уведомляете об этом в их чат","Говорите, что техподдержка уже не работает","Откладываете до утра"],c:1,a:"Перевести в техподдержку + уведомить в их рабочем чате о срочном запросе. У них есть регламент после 21:00"},
+  {b:"Забота и Расписание КС",t:"open",q:"Чем отличается задача «Заботы КС» от «Расписания КС»? Кратко опишите функции каждого.",a:"Забота: консультирование, нестандартные ситуации, отработка возвратов. Расписание: отмены, замены, переносы занятий, подбор расписания, консолидация групп"},
+  {b:"Забота и Расписание КС",t:"open",q:"По каким вопросам нужно переводить клиента на «Забота КС» после старта обучения?",a:"Общие вопросы после первого урока, нестандартные ситуации, отработка заявок на возврат после старта, вопросы по обучению не касающиеся расписания"},
+  {b:"Забота и Расписание КС",t:"choice",q:"Что нужно сделать с полем «Тип менеджерской группы» после завершения работы с клиентом из любого отдела?",opts:["Оставить как есть","Вернуть клиента на Забота КС","Поставить Онбординг","Поставить Завершено"],c:1,a:"После завершения работы клиент возвращается на Забота КС"},
+  {b:"Забота и Расписание КС",t:"choice",q:"Клиент прошёл все уроки с преподавателем и проходит асинхронную часть. Нужно ли с ним работать?",opts:["Нет — обучение фактически завершено","Да — сервис работает до окончания полного обучения","Только если клиент сам пишет","Передать в монетизацию"],c:1,a:"Сервис работает с клиентами до окончания полного обучения, включая асинхронную часть"},
+  {b:"Забота и Расписание КС",t:"choice",q:"Клиент хочет сменить преподавателя по своему желанию (не жалоба). Куда переводить?",opts:["Забота КС","Расписание КС","Учебная часть","Менторы"],c:1,a:"Расписание КС — смена преподавателя по желанию клиента входит в их зону ответственности"},
+  {b:"Забота и Расписание КС",t:"open",q:"Что такое консолидация и какова её цель в работе отдела расписания?",a:"Объединение и расформирование учебных групп для достижения оптимальной заполняемости. Цель — увеличить число учеников в группах"},
+  {b:"Возвраты",t:"choice",q:"Кто имеет право перевести клиента в отдел возвратов?",opts:["Любой отдел в любой момент","Только Забота КС и Онбординг — после своей отработки","Только руководитель","Клиент переводится сам"],c:1,a:"На возвраты переводит только Забота или Онбординг — после собственной отработки. Либо если клиент сам ответил менеджеру возвратов"},
+  {b:"Возвраты",t:"choice",q:"Клиент сам написал менеджеру возвратов (они уже были в диалоге). Что делать?",opts:["Не переводить","Перевести — клиент ответил им","Сначала отработать самому","Уточнить у руководителя"],c:1,a:"Переводим — если клиент ответил именно тем, с кем уже был в диалоге"},
+  {b:"Возвраты",t:"open",q:"Какие ключевые цели отдела возвратов? Назовите не менее трёх.",a:"Сокращение объёма возвратов, минимизация сроков обработки заявок, перевод части обращений в «сохранение продажи», систематизация обратной связи"},
+  {b:"Возвраты",t:"choice",q:"Регламент запрещает откладывать звонки негативным клиентам. Почему?",opts:["Чтобы не нарушать SLA","Нет более приоритетной задачи — звонить нужно сразу для недопущения жалоб","Чтобы быстрее закрыть диалог","Это требование руководителя"],c:1,a:"ЗАПРЕЩЕНО откладывать звонки негативным клиентам. Нет более приоритетной задачи, чем недопущение жалоб"},
+  {b:"Менторы",t:"open",q:"Какова ключевая задача отдела менторов? Что они передают родителям?",a:"Сопровождение учебного процесса и коммуникация с родителями. Передают обратную связь от преподавателей по ключевым показателям успеваемости"},
+  {b:"Менторы",t:"choice",q:"Кто из отделов может переводить клиента к менторам?",opts:["Любой отдел","Только Онбординг","Только Забота КС","Только Расписание"],c:2,a:"На менторов переводит только Забота КС. Менторы сами инициируют контакт первыми"},
+  {b:"Менторы",t:"choice",q:"Что такое «группа риска» в работе менторов?",opts:["Клиенты с задержкой оплаты","Ученики с приоритетом 1–2 или плохой успеваемостью","Клиенты, написавшие жалобу","Новые клиенты без первого урока"],c:1,a:"Ученики с приоритетом 1–2 или с плохой успеваемостью по обратной связи от преподавателя"},
+  {b:"Менторы",t:"open",q:"Какие три ключевых показателя успеваемости ученика передают менторы родителям?",a:"Посещаемость, активность на уроках, выполнение домашних заданий"},
+  {b:"Монетизация",t:"open",q:"Чем занимается отдел «Апсейл» и когда клиента нужно переводить к ним?",a:"Переводят клиентов с ежемесячных оплат на рассрочку. Переводим если клиент ответил именно им или сам хочет перейти на рассрочку"},
+  {b:"Монетизация",t:"choice",q:"Оплаченные уроки клиента закончились, но обучение ещё идёт и он хочет продолжить. Какой отдел?",opts:["Апсейл","Помесячные оплаты","Выпускники","ППО"],c:1,a:"Помесячные оплаты — занимаются клиентами, у которых закончились оплаченные уроки, но обучение продолжается"},
+  {b:"Монетизация",t:"choice",q:"Клиент: «Мы полностью закончили обучение, хотим продолжить». Какой отдел?",opts:["Апсейл","Помесячные оплаты","Выпускники","Кросс-продажи"],c:2,a:"Выпускники — закончились и деньги, и обучение полностью"},
+  {b:"Монетизация",t:"choice",q:"Клиент интересуется наставничеством по математике. Куда переводить?",opts:["Менторы","Кросс-продажи / наставничество","Апсейл","Онбординг"],c:1,a:"Кросс-продажи/наставничество — предлагают репетиторство и наставничество по рус, англ, мат, информатике"},
+  {b:"Монетизация",t:"choice",q:"В каком случае можно перевести клиента в отдел ППО?",opts:["Клиент хочет купить онлайн-курс","Только если клиент сам ответил им и они были в диалоге ранее","Всегда, если интересуется курсами","Если разрешил онбординг"],c:1,a:"ППО — переводим только если клиент ответил именно им (они были в диалоге ранее)"},
+  {b:"Монетизация",t:"choice",q:"Клиент хочет оформить доступ к вебинарам One to Many. Что делает менеджер Заботы КС?",opts:["Оформляет доступ самостоятельно","Направляет к менеджеру Бадди — они занимаются этим","Переводит в монетизацию","Передаёт в онбординг"],c:1,a:"Забота КС больше не оформляет доступ к One to Many — это задача менеджера Бадди"},
+  {b:"Монетизация",t:"choice",q:"Клиент на ежемесячных оплатах хочет перейти на рассрочку. Какой отдел монетизации?",opts:["Помесячные оплаты","Апсейл","Выпускники","ППО"],c:1,a:"Апсейл — занимаются переводом с ежемесячных оплат на рассрочку"},
+  {b:"Преподаватели",t:"choice",q:"При плановой замене преподавателя — нужно ли переводить клиента в отдел Замены?",opts:["Да, всегда","Нет — они сами пишут клиентам","Только если клиент сам просит","Только если замена на следующий урок"],c:1,a:"Нет. Отдел Замены самостоятельно пишет клиентам — мы их не переводим"},
+  {b:"Преподаватели",t:"open",q:"Клиент жалуется на преподавателя: грубит и плохо объясняет. Ваши действия и куда передаёте запрос?",a:"Принять запрос, передать в «ЧАТ ПРОБЛЕМ С ПРЕПОДАВАТЕЛЯМИ» в Telegram для коммуникации с учебной частью"},
+  {b:"Преподаватели",t:"open",q:"Где хранится информация о чатах и номерах преподавателей?",a:"В таблице «Чаты и номера преподавателей» (Google Sheets) — централизованный справочник контактов"},
+  {b:"Преподаватели",t:"choice",q:"Клиент хочет сменить преподавателя по желанию (не жалоба, а просьба). Куда?",opts:["Учебная часть","ЧАТ ПРОБЛЕМ С ПРЕПОДАВАТЕЛЯМИ","Расписание КС","Забота КС"],c:2,a:"Расписание КС — смена преподавателя по желанию это их зона"},
+  {b:"Преподаватели",t:"open",q:"Что такое «нулевой блок» и в какой чат направляется информация для поиска преподавателя?",a:"Вводные занятия для новых клиентов. Информация направляется в чат «Нулевые блоки» в Telegram"},
+  {b:"Общие регламенты",t:"choice",q:"Пришло сообщение от клиента, но оно адресовано другому отделу. Ваши действия?",opts:["Ответить, потом перевести","Сразу перевести без ответа в чате","Уточнить у руководителя","Ответить частично и перевести"],c:1,a:"Если обращение к другому отделу — переводить сразу, без ответа в чате. Иначе диалог не попадёт во вкладку «Без ответа» у принимающей группы"},
+  {b:"Общие регламенты",t:"open",q:"Вы по ошибке ответили клиенту перед переводом в другой отдел. Что нужно сделать?",a:"Обязательно уведомить принимающую группу в Telegram с информацией о клиенте и сути запроса. Ответственность за возможную потерю обращения — на инициаторе перевода"},
+  {b:"Общие регламенты",t:"choice",q:"Почему нельзя звонить клиенту без предварительного текстового ответа в CRM?",opts:["Неудобно","Нарушается SLA — клиент остаётся без ответа в системе","Клиент может не взять трубку","Запрещено корпоративным стилем"],c:1,a:"Без текста в CRM клиент формально без ответа — нарушается SLA"},
+  {b:"Общие регламенты",t:"choice",q:"Чему равна сумма процентов распределения для одного типа менеджерской группы?",opts:["50%","Зависит от числа менеджеров","100%","Произвольно"],c:2,a:"Сумма процентов распределения для одного типа группы всегда = 100"},
+  {b:"Общие регламенты",t:"choice",q:"Что делать если на вашей менеджерской группе нет сотрудников в смене?",opts:["Оставить как есть","Поставить % распределения = 0 и перевести клиентов на активные группы","Закрыть группу","Сообщить руководителю и ничего не делать"],c:1,a:"% распределения = 0, клиенты переводятся на группы, где есть сотрудники в смене"},
+  {b:"Общие регламенты",t:"open",q:"Перечислите все четыре информационные системы, которые использует компания в работе.",a:"1. CRM — school.easy-mo.ru. 2. ВКонтакте. 3. Telegram. 4. Учебная платформа — platform-easycode.ru"},
+  {b:"Общие регламенты",t:"open",q:"Перечислите принципы компании, которые обязаны соблюдать все сотрудники сервиса.",a:"Не допускается негатив к клиентам. Не допускается негатив к сотрудникам. Ответственность. Инициативность. Стремление быть первым"},
+  {b:"Общие регламенты",t:"open",q:"Какие этапы задачи существуют в Yougile и кто переводит задачу в «Завершено»?",a:"В очереди → В процессе → На верификации Лизы → На доработке → Завершено / Отменено. В «Завершено» переводит директор сервиса"},
+  {b:"Передача диалогов",t:"choice",q:"Когда разрешается ответить клиенту ДО перевода в другой отдел?",opts:["Всегда, чтобы клиент не ждал","Никогда — только перевод без ответа","Только если вопрос простой","Только по согласованию с руководителем"],c:1,a:"НИКОГДА. Если обращение не по вашей группе — переводить сразу, без ответа. Ответ до перевода нарушает попадание в «Без ответа» у принимающей группы"},
+  {b:"Передача диалогов",t:"choice",q:"Что нужно указать в «Комментарии для передачи» при переводе клиента?",opts:["Ничего — достаточно сменить отдел","Суть запроса клиента и контекст ситуации","Имя клиента и номер телефона","Дату и время обращения"],c:1,a:"Суть запроса и контекст — чтобы принимающий менеджер сразу понял ситуацию без чтения всей истории"},
+  {b:"Передача диалогов",t:"open",q:"Клиент написал вам в Расписание КС с заявкой на возврат. Опишите алгоритм действий пошагово.",a:"1. НЕ отрабатывать возврат самостоятельно. 2. Написать текстовый ответ клиенту. 3. Заполнить «Комментарий для передачи». 4. Перевести на Забота КС — они первыми отрабатывают возвраты"},
+  {b:"Передача диалогов",t:"choice",q:"Вы перевели клиента в другой отдел, но ошибочно ответили ему до перевода. Кто несёт ответственность за потерю диалога?",opts:["Принимающий отдел","Инициатор перевода (вы)","Руководитель","Никто — это случайность"],c:1,a:"Ответственность на инициаторе перевода. Нужно уведомить принимающую группу в Telegram"},
+  {b:"Передача диалогов",t:"open",q:"Клиент написал вопрос сразу в несколько каналов (CRM и Telegram). Где приоритет ответа?",a:"Приоритет — там, где диалог ведётся. Ответить в одном канале и уведомить клиента. Не оставлять без ответа ни один из каналов"},
+  {b:"Практические кейсы",t:"open",q:"🔥 Клиент пишет через 20 минут после начала урока — не может подключиться. Алгоритм действий пошагово.",a:"1. Написать текстовый ответ в CRM немедленно. 2. Перевести в техподдержку (техническая проблема — подключение). 3. Уведомить техподдержку в их чате о срочности"},
+  {b:"Практические кейсы",t:"open",q:"🔥 Клиент спрашивает: «Сколько уроков у меня осталось?» Как отвечаете и где смотрите?",a:"Проверить в CRM в разделе заказов/карточке клиента количество оставшихся уроков. Уточнить тип оплаты для корректного ответа. Дать ответ клиенту в диалоге"},
+  {b:"Практические кейсы",t:"open",q:"🔥 У клиента статус «Нет оплаты». Куда переводить? Что нужно проверить в первую очередь?",a:"Сначала проверить тип оплаты: помесячная → «Помесячные оплаты»; закончилось всё → «Выпускники»; хочет рассрочку → «Апсейл». Без проверки типа нельзя корректно маршрутизировать"},
+  {b:"Практические кейсы",t:"open",q:"🔥 Клиент прошёл все уроки с преподавателем и проходит асинхронную часть. Какой тип менеджерской группы? Нужно ли работать?",a:"Тип — Забота КС. Да, работать нужно — сервис сопровождает клиентов до окончания полного обучения, включая асинхронную часть"},
+  {b:"Практические кейсы",t:"open",q:"🔥 Клиент написал агрессивно, нужно позвонить. Что сделаете в CRM до звонка?",a:"Обязательно написать текстовый ответ в CRM перед звонком (напр. «Сейчас свяжусь»). Без текста — нарушение SLA"},
+  {b:"Практические кейсы",t:"open",q:"🔥 Клиент обратился за справкой для налогового вычета. Кто занимается и где ведётся работа?",a:"Онбординг — оформляют документы для налогового вычета. Работа ведётся через таблицу «Заявления на налоговый вычет» совместно с бухгалтерами"},
+  {b:"Практические кейсы",t:"open",q:"🔥 Ребёнок не появлялся на уроках 3 раза за месяц. Вы — Забота КС. Что делаете?",a:"Передать информацию менторам через таблицу «Менторам, явки» — они занимаются клиентами с более 2 пропусков в месяц"},
+  {b:"Практические кейсы",t:"open",q:"🔥 Клиент EasyCode 2.0 просит ставить ему два урока в неделю. Ваши действия?",a:"Отказать. EasyCode 2.0 — строго один раз в неделю. Объяснить клиенту это правило"},
+  {b:"Практические кейсы",t:"open",q:"🔥 На вашей менеджерской группе нет сотрудников в смене. Что делать?",a:"Поставить % распределения = 0 на эту группу. Перевести клиентов на активные группы. Уведомить руководителя"},
+];
+
+const STORAGE_KEY = 'easycode_attestation_results';
+let cur=0, ans=[], timerSec=0, timerInterval=null;
+let userInfo={name:'',tg:'',dept:''};
+
+const STAFF_PASSWORD = 'easycode2026';
+
+function checkPassword(){
+  const val=document.getElementById('pw-inp').value;
+  if(val===STAFF_PASSWORD){
+    show('screen-register');
+  } else {
+    document.getElementById('pw-error').textContent='Неверный пароль. Попробуйте ещё раз.';
+    document.getElementById('pw-inp').value='';
+    document.getElementById('pw-inp').focus();
+  }
+}
+
+function show(id){
+  ['screen-password','screen-register','screen-question','screen-result','screen-review'].forEach(s=>{
+    document.getElementById(s).style.display='none';
+  });
+  document.getElementById(id).style.display='block';
+}
+
+function beginQuiz(){
+  const name=document.getElementById('inp-name').value.trim();
+  const tg=document.getElementById('inp-tg').value.trim();
+  const dept=document.getElementById('inp-dept').value.trim();
+  if(!name){alert('Введите имя');document.getElementById('inp-name').focus();return;}
+  if(!tg){alert('Введите Telegram-логин');document.getElementById('inp-tg').focus();return;}
+  userInfo={name,tg:tg.startsWith('@')?tg:'@'+tg,dept};
+  document.getElementById('header-name').textContent=name;
+  document.getElementById('header-tg').textContent=userInfo.tg;
+  cur=0;ans=[];timerSec=0;
+  show('screen-question');startTimer();renderQ();
+}
+
+function startTimer(){
+  clearInterval(timerInterval);
+  timerInterval=setInterval(()=>{
+    timerSec++;
+    const m=Math.floor(timerSec/60),s=timerSec%60;
+    const el=document.getElementById('timer-val');
+    el.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    el.className='timer-val'+(timerSec>2400?' danger':timerSec>1800?' warn':'');
+  },1000);
+}
+
+function renderQ(){
+  const q=Q[cur];
+  document.getElementById('q-number').textContent=`ВОПРОС ${String(cur+1).padStart(2,'0')} из ${Q.length}`;
+  document.getElementById('q-text').textContent=q.q;
+  document.getElementById('block-badge').textContent=q.b;
+  const pct=Math.round(cur/Q.length*100);
+  document.getElementById('prog-text').textContent=`Вопрос ${cur+1} из ${Q.length}`;
+  document.getElementById('prog-pct').textContent=pct+'%';
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('btn-next').textContent='Ответить';
+  const inp=document.getElementById('q-input');
+  if(q.t==='choice'){
+    inp.innerHTML='<div class="options">'+q.opts.map((o,i)=>`<button class="opt" onclick="selectOpt(this,${i})">${o}</button>`).join('')+'</div>';
+  } else {
+    inp.innerHTML='<textarea class="open-answer" id="open-inp" placeholder="Введите ваш ответ..."></textarea>';
+  }
+}
+
+function selectOpt(el,i){
+  document.querySelectorAll('.opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function submitAnswer(){
+  const q=Q[cur];
+  if(q.t==='choice'){
+    const sel=document.querySelector('.opt.selected');
+    if(!sel){alert('Выберите вариант ответа');return;}
+    const idx=parseInt(sel.getAttribute('onclick').match(/\d+$/)[0]);
+    ans.push({q,userAnswer:q.opts[idx],correct:idx===q.c,type:'choice',skipped:false});
+  } else {
+    const val=(document.getElementById('open-inp')||{}).value||'';
+    if(!val.trim()){alert('Введите ответ');return;}
+    ans.push({q,userAnswer:val.trim(),correct:null,type:'open',skipped:false});
+  }
+  advance();
+}
+
+function skipQuestion(){
+  ans.push({q:Q[cur],userAnswer:'',correct:false,type:Q[cur].t,skipped:true});
+  advance();
+}
+
+function advance(){
+  if(cur<Q.length-1){cur++;renderQ();}
+  else{clearInterval(timerInterval);showResult();}
+}
+
+function saveResult(resultData){
+  try{
+    const existing=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');
+    existing.push(resultData);
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(existing));
+    return true;
+  }catch(e){return false;}
+}
+
+function showResult(){
+  const correct=ans.filter(a=>a.correct===true).length;
+  const wrong=ans.filter(a=>a.correct===false&&!a.skipped).length;
+  const open=ans.filter(a=>a.correct===null).length;
+  const skipped=ans.filter(a=>a.skipped).length;
+  const choiceTotal=ans.filter(a=>a.type==='choice').length;
+  const pct=choiceTotal>0?Math.round(correct/choiceTotal*100):0;
+  const m=Math.floor(timerSec/60),s=timerSec%60;
+  const timeStr=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+
+  document.getElementById('res-pct').textContent=pct+'%';
+  document.getElementById('res-correct').textContent=correct;
+  document.getElementById('res-wrong').textContent=wrong;
+  document.getElementById('res-open').textContent=open;
+  document.getElementById('res-skip').textContent=skipped;
+  document.getElementById('res-time').textContent=`⏱ Время: ${timeStr}`;
+
+  const title=pct>=85?'Отличный результат! 🎉':pct>=65?'Хороший результат 👍':'Есть над чем поработать 📚';
+  const sub=pct>=85?'Уверенно знаете регламенты. Можно работать!':pct>=65?'Основу знаете, но есть пробелы — повторите разобранные темы':'Рекомендуем перечитать регламент и пройти аттестацию повторно';
+  document.getElementById('res-title').textContent=title;
+  document.getElementById('res-sub').textContent=sub;
+
+  const resultData={
+    id: Date.now(),
+    date: new Date().toLocaleString('ru-RU'),
+    name: userInfo.name,
+    tg: userInfo.tg,
+    dept: userInfo.dept,
+    score: pct,
+    correct, wrong, open, skipped,
+    totalQuestions: Q.length,
+    timeSpent: timeStr,
+    timerSec,
+    answers: ans.map(a=>({
+      block: a.q.b,
+      question: a.q.q,
+      type: a.type,
+      userAnswer: a.userAnswer,
+      correctAnswer: a.q.a,
+      correct: a.correct,
+      skipped: a.skipped
+    }))
+  };
+
+  const saved=saveResult(resultData);
+  const sw=document.getElementById('save-status-wrap');
+  if(saved){
+    sw.innerHTML='<div class="save-status">✅ Результат сохранён — руководитель может просмотреть в дашборде</div>';
+  } else {
+    sw.innerHTML='<div class="save-status error">⚠️ Не удалось сохранить — покажи экран руководителю</div>';
+  }
+
+  show('screen-result');
+}
+
+function showReview(){
+  const blocks=[...new Set(ans.map(a=>a.q.b))];
+  const filterBar=document.getElementById('filter-bar');
+  filterBar.innerHTML='<button class="filter-btn active" onclick="filterReview(\'all\',this)">Все</button>'
+    +blocks.map(b=>`<button class="filter-btn" onclick="filterReview('${b.replace(/'/g,"\\'")}',this)">${b}</button>`).join('');
+  renderReview('all');
+  show('screen-review');
+}
+
+function filterReview(block,btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderReview(block);
+}
+
+function renderReview(block){
+  const list=document.getElementById('review-list');
+  const filtered=block==='all'?ans:ans.filter(a=>a.q.b===block);
+  list.innerHTML=filtered.map((a,i)=>{
+    const idx=ans.indexOf(a);
+    let cls='r-open',icon='🔵';
+    if(a.skipped){cls='r-wrong';icon='⬜';}
+    else if(a.type==='choice'){cls=a.correct?'r-correct':'r-wrong';icon=a.correct?'✅':'❌';}
+    const userVal=a.skipped?'<div class="r-skipped">Пропущен</div>':`<div class="r-user-label">Ваш ответ</div><div class="r-user-val">${a.userAnswer||'—'}</div>`;
+    const correctAns=(!a.correct||a.type==='open')?`<div class="r-answer-label">Эталонный ответ</div><div class="r-answer-val">${a.q.a}</div>`:'';
+    return `<div class="review-item ${cls}">
+      <div class="r-block">${a.q.b}</div>
+      <div class="r-q">${icon} Вопрос ${idx+1}: ${a.q.q}</div>
+      ${userVal}${correctAns}
+    </div>`;
+  }).join('');
+}
+
+function backToResult(){show('screen-result');}
+function restartQuiz(){
+  clearInterval(timerInterval);
+  show('screen-register');
+  document.getElementById('inp-name').value='';
+  document.getElementById('inp-tg').value='';
+  document.getElementById('inp-dept').value='';
+}
+</script>
+</body>
+</html>
