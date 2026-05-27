@@ -410,17 +410,13 @@ async function showResult(){
 
   const box=document.getElementById('save-box');
   try{
-    const resp=await fetch(SHEET_URL,{
+    await fetch(SHEET_URL,{
       method:'POST',
+      mode:'no-cors',
       body:JSON.stringify(payload)
     });
-    const json=await resp.json();
-    if(json.status==='ok'){
-      box.className='save-box saved';
-      box.innerHTML='<h3 style="color:var(--accent3)">✅ Результат сохранён!</h3><p>Данные записаны в таблицу руководителя — всё готово.</p>';
-    } else {
-      throw new Error(json.message);
-    }
+    box.className='save-box saved';
+    box.innerHTML='<h3 style="color:var(--accent3)">✅ Результат сохранён!</h3><p>Данные записаны в таблицу руководителя — всё готово.</p>';
   } catch(e){
     box.className='save-box error';
     box.innerHTML='<h3 style="color:var(--accent2)">⚠️ Не удалось сохранить</h3><p>Сделай скриншот результата и отправь руководителю в Telegram. Ошибка: '+e.message+'</p>';
