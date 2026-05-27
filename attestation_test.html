@@ -339,13 +339,13 @@ function renderQ(){
   document.getElementById('prog-fill').style.width=pct+'%';
   const inp=document.getElementById('q-input');
   if(q.t==='choice'){
-    inp.innerHTML='<div class="options">'+q.opts.map((o,i)=>`<button class="opt" onclick="selectOpt(this,${i})">${o}</button>`).join('')+'</div>';
+    inp.innerHTML='<div class="options">'+q.opts.map((o,i)=>`<button class="opt" data-idx="${i}" onclick="selectOpt(this)">${o}</button>`).join('')+'</div>';
   } else {
     inp.innerHTML='<textarea class="open-answer" id="open-inp" placeholder="Введите ваш ответ..."></textarea>';
   }
 }
 
-function selectOpt(el,i){
+function selectOpt(el){
   document.querySelectorAll('.opt').forEach(o=>o.classList.remove('selected'));
   el.classList.add('selected');
 }
@@ -355,7 +355,7 @@ function submitAnswer(){
   if(q.t==='choice'){
     const sel=document.querySelector('.opt.selected');
     if(!sel){alert('Выберите вариант ответа');return;}
-    const idx=parseInt(sel.getAttribute('onclick').match(/\d+$/)[0]);
+    const idx=parseInt(sel.getAttribute('data-idx'));
     ans.push({q,userAnswer:q.opts[idx],correct:idx===q.c,type:'choice',skipped:false});
   } else {
     const val=(document.getElementById('open-inp')||{}).value||'';
