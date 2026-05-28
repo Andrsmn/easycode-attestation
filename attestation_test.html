@@ -32,28 +32,39 @@ h1{font-family:'Unbounded',sans-serif;font-size:clamp(24px,4vw,44px);font-weight
 .field input::placeholder{color:var(--muted)}
 .field-hint{font-size:12px;color:var(--muted);margin-top:5px}
 .err{color:var(--accent2);font-size:13px;margin-top:10px;min-height:18px}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:#fff;font-family:'Onest',sans-serif;font-size:15px;font-weight:600;padding:13px 32px;border-radius:100px;border:none;cursor:pointer;transition:transform .15s,box-shadow .15s;text-decoration:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:#fff;font-family:'Onest',sans-serif;font-size:15px;font-weight:600;padding:13px 32px;border-radius:100px;border:none;cursor:pointer;transition:transform .15s,box-shadow .15s}
 .btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(91,127,255,.35)}
 .btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
 .btn.secondary{background:var(--surface);color:var(--text);border:1px solid var(--border)}
 .btn.full{width:100%}
-
-/* Loading */
-#screen-loading .center{gap:16px}
-.spinner{width:48px;height:48px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+.spinner{width:48px;height:48px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:16px}
 @keyframes spin{to{transform:rotate(360deg)}}
-.loading-text{color:var(--muted);font-size:15px}
 
-/* Question */
-#screen-question{display:none}
+/* THEORY SCREEN */
+#screen-theory{display:none;min-height:100vh}
+.theory-layout{display:grid;grid-template-rows:auto 1fr auto;min-height:100vh}
+.theory-header{padding:16px 32px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.theory-body{padding:40px 32px;max-width:780px;margin:0 auto;width:100%}
+.theory-block-badge{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 14px;border-radius:100px;background:rgba(255,209,102,.12);color:var(--accent4);border:1px solid rgba(255,209,102,.3);margin-bottom:20px;display:inline-block}
+.theory-title{font-family:'Unbounded',sans-serif;font-size:clamp(20px,3vw,30px);font-weight:900;margin-bottom:24px;line-height:1.2}
+.theory-content{font-size:15px;line-height:1.9;color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px 32px;white-space:pre-wrap;border-left:4px solid var(--accent4)}
+.theory-footer{padding:20px 32px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;align-items:center;gap:12px}
+.theory-hint{font-size:13px;color:var(--muted)}
+.btn.theory-btn{background:var(--accent4);color:#1a1200}
+.btn.theory-btn:hover{box-shadow:0 8px 32px rgba(255,209,102,.35)}
+.theory-progress{flex:1;min-width:180px}
+.theory-progress .progress-label{font-size:12px;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between}
+.progress-bar{height:4px;background:var(--border);border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;background:var(--accent);border-radius:4px;transition:width .4s ease}
+
+/* QUESTION */
+#screen-question{display:none;min-height:100vh}
 .q-layout{display:grid;grid-template-rows:auto 1fr auto;min-height:100vh}
 .q-header{padding:16px 32px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .user-chip{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:6px 14px;font-size:13px;color:var(--muted)}
 .user-chip strong{color:var(--text)}
 .progress-wrap{flex:1;min-width:180px}
 .progress-label{font-size:12px;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between}
-.progress-bar{height:4px;background:var(--border);border-radius:4px;overflow:hidden}
-.progress-fill{height:100%;background:var(--accent);border-radius:4px;transition:width .4s ease}
 .block-badge{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:4px 12px;border-radius:100px;background:rgba(91,127,255,.1);color:var(--accent);border:1px solid rgba(91,127,255,.2);white-space:nowrap}
 .timer-wrap{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:6px 16px}
 .timer-val{font-family:'Unbounded',sans-serif;font-size:14px;font-weight:700;color:var(--text);min-width:52px;text-align:center}
@@ -72,7 +83,7 @@ h1{font-family:'Unbounded',sans-serif;font-size:clamp(24px,4vw,44px);font-weight
 .skip-btn{background:none;border:none;color:var(--muted);font-family:'Onest',sans-serif;font-size:14px;cursor:pointer;padding:8px 0;text-decoration:underline;text-underline-offset:3px}
 .skip-btn:hover{color:var(--text)}
 
-/* Result */
+/* RESULT */
 .score-circle{width:150px;height:150px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 32px;border:3px solid var(--accent)}
 .score-num{font-family:'Unbounded',sans-serif;font-size:40px;font-weight:900;color:var(--accent)}
 .score-label{font-size:12px;color:var(--muted);margin-top:2px}
@@ -91,7 +102,7 @@ h1{font-family:'Unbounded',sans-serif;font-size:clamp(24px,4vw,44px);font-weight
 .green{color:var(--accent3)}.red{color:var(--accent2)}.yellow{color:var(--accent4)}
 .btn-row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
 
-/* Review */
+/* REVIEW */
 #screen-review{display:none;padding:40px 20px 80px}
 .review-inner{max-width:780px;margin:0 auto}
 .review-head{display:flex;align-items:center;gap:16px;margin-bottom:32px;flex-wrap:wrap}
@@ -111,8 +122,9 @@ h1{font-family:'Unbounded',sans-serif;font-size:clamp(24px,4vw,44px);font-weight
 .fbtn{font-size:12px;padding:5px 14px;border-radius:100px;border:1px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;font-family:'Onest',sans-serif;transition:all .15s}
 .fbtn.active,.fbtn:hover{border-color:var(--accent);color:var(--accent);background:rgba(91,127,255,.08)}
 @media(max-width:600px){
-  .q-header,.q-body,.q-footer{padding-left:16px;padding-right:16px}
-  .q-body{padding-top:24px;padding-bottom:24px}
+  .q-header,.q-body,.q-footer,.theory-header,.theory-body,.theory-footer{padding-left:16px;padding-right:16px}
+  .q-body,.theory-body{padding-top:24px;padding-bottom:24px}
+  .theory-content{padding:20px}
 }
 </style>
 </head>
@@ -136,11 +148,11 @@ h1{font-family:'Unbounded',sans-serif;font-size:clamp(24px,4vw,44px);font-weight
   </div>
 </div>
 
-<!-- ЗАГРУЗКА ВОПРОСОВ -->
+<!-- ЗАГРУЗКА -->
 <div id="screen-loading" class="screen">
   <div class="center">
     <div class="spinner"></div>
-    <div class="loading-text">Загружаем вопросы из базы...</div>
+    <div style="color:var(--muted);font-size:15px">Загружаем материалы из базы...</div>
   </div>
 </div>
 
@@ -152,7 +164,7 @@ h1{font-family:'Unbounded',sans-serif;font-size:clamp(24px,4vw,44px);font-weight
     <p class="subtitle">CRM · Отделы · Передача диалогов · Практические кейсы</p>
     <div class="meta-grid">
       <div class="meta-card"><div class="num" id="q-count">—</div><div class="label">вопросов</div></div>
-      <div class="meta-card"><div class="num">12</div><div class="label">блоков</div></div>
+      <div class="meta-card"><div class="num" id="t-count">—</div><div class="label">блоков теории</div></div>
       <div class="meta-card"><div class="num">~40</div><div class="label">минут</div></div>
     </div>
     <div class="box">
@@ -171,6 +183,29 @@ h1{font-family:'Unbounded',sans-serif;font-size:clamp(24px,4vw,44px);font-weight
         <input type="text" id="inp-dept" placeholder="Забота КС, Онбординг..." />
       </div>
       <button class="btn full" onclick="beginQuiz()">▶ Начать аттестацию</button>
+    </div>
+  </div>
+</div>
+
+<!-- ТЕОРИЯ -->
+<div id="screen-theory">
+  <div class="theory-layout">
+    <div class="theory-header">
+      <div class="user-chip">👤 <strong id="th-name"></strong> · <span id="th-tg" style="color:var(--accent)"></span></div>
+      <div class="theory-progress">
+        <div class="progress-label"><span id="th-prog-text"></span><span id="th-prog-pct"></span></div>
+        <div class="progress-bar"><div class="progress-fill" id="th-prog-fill" style="width:0%"></div></div>
+      </div>
+      <div class="timer-wrap"><span>⏱</span><span class="timer-val" id="th-timer">00:00</span></div>
+    </div>
+    <div class="theory-body">
+      <div class="theory-block-badge" id="th-block"></div>
+      <div class="theory-title" id="th-title"></div>
+      <div class="theory-content" id="th-content"></div>
+    </div>
+    <div class="theory-footer">
+      <div class="theory-hint">📖 Прочитайте внимательно — далее будут вопросы по этой теме</div>
+      <button class="btn theory-btn" onclick="advanceFromTheory()">Понятно, продолжить →</button>
     </div>
   </div>
 </div>
@@ -241,14 +276,19 @@ h1{font-family:'Unbounded',sans-serif;font-size:clamp(24px,4vw,44px);font-weight
 const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwr4RSWZR_iySV80g4lFNUPLWD1Wz35hSXi-UOWAHzR-FDX_mN-MZ7Y2CquDPXGj7pSyg/exec';
 const STAFF_PASSWORD = 'easycode2026';
 
-let Q = []; // загружается из таблицы
-let cur=0, ans=[], timerSec=0, timerInterval=null;
-let userInfo={name:'',tg:'',dept:''};
+let ALL = [];   // все строки из таблицы (theory + choice + open)
+let cur = 0;    // текущий индекс в ALL
+let ans = [];   // только ответы на вопросы
+let qNum = 0;   // счётчик только вопросов (не теории)
+let totalQ = 0; // всего вопросов
+let timerSec = 0, timerInterval = null;
+let userInfo = {name:'', tg:'', dept:''};
 
 function show(id) {
-  ['screen-password','screen-loading','screen-register','screen-question','screen-result','screen-review']
-    .forEach(s => document.getElementById(s).style.display='none');
-  document.getElementById(id).style.display='block';
+  ['screen-password','screen-loading','screen-register','screen-theory',
+   'screen-question','screen-result','screen-review']
+    .forEach(s => document.getElementById(s).style.display = 'none');
+  document.getElementById(id).style.display = 'block';
 }
 
 function checkPw() {
@@ -257,8 +297,8 @@ function checkPw() {
     show('screen-loading');
     loadQuestions();
   } else {
-    document.getElementById('pw-error').textContent='Неверный пароль. Попробуйте ещё раз.';
-    document.getElementById('pw-inp').value='';
+    document.getElementById('pw-error').textContent = 'Неверный пароль. Попробуйте ещё раз.';
+    document.getElementById('pw-inp').value = '';
     document.getElementById('pw-inp').focus();
   }
 }
@@ -267,13 +307,19 @@ async function loadQuestions() {
   try {
     const resp = await fetch(SHEET_URL + '?type=questions');
     const data = await resp.json();
-    if (!data || !data.length) throw new Error('Вопросы не найдены в таблице');
-    Q = data;
-    document.getElementById('q-count').textContent = Q.length;
+    if (!data || !data.length) throw new Error('Материалы не найдены в таблице');
+    ALL = data;
+    totalQ = ALL.filter(r => r.t !== 'theory').length;
+    const theoryCount = ALL.filter(r => r.t === 'theory').length;
+    document.getElementById('q-count').textContent = totalQ;
+    document.getElementById('t-count').textContent = theoryCount;
     show('screen-register');
   } catch(e) {
     document.getElementById('screen-loading').innerHTML =
-      '<div class="center"><div style="color:var(--accent2);font-size:16px;max-width:400px;text-align:center">⚠️ Не удалось загрузить вопросы.<br><br>' + e.message + '<br><br><button class="btn secondary" onclick="location.reload()">Попробовать снова</button></div></div>';
+      `<div class="center"><div style="color:var(--accent2);font-size:16px;max-width:400px;text-align:center">
+        ⚠️ Не удалось загрузить материалы.<br><br>${e.message}<br><br>
+        <button class="btn secondary" onclick="location.reload()">Попробовать снова</button>
+      </div></div>`;
   }
 }
 
@@ -286,32 +332,68 @@ function beginQuiz() {
   userInfo = { name, tg: tg.startsWith('@') ? tg : '@'+tg, dept };
   document.getElementById('header-name').textContent = name;
   document.getElementById('header-tg').textContent = userInfo.tg;
-  cur=0; ans=[]; timerSec=0;
-  show('screen-question');
+  document.getElementById('th-name').textContent = name;
+  document.getElementById('th-tg').textContent = userInfo.tg;
+  cur = 0; ans = []; qNum = 0; timerSec = 0;
   startTimer();
-  renderQ();
+  renderCurrent();
 }
 
 function startTimer() {
   clearInterval(timerInterval);
   timerInterval = setInterval(() => {
     timerSec++;
-    const m=Math.floor(timerSec/60), s=timerSec%60;
-    const el=document.getElementById('timer-val');
-    el.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
-    el.className='timer-val'+(timerSec>2400?' danger':timerSec>1800?' warn':'');
+    const m = Math.floor(timerSec/60), s = timerSec%60;
+    const t = String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    const el1 = document.getElementById('timer-val');
+    const el2 = document.getElementById('th-timer');
+    const cls = timerSec>2400?' danger':timerSec>1800?' warn':'';
+    if(el1){ el1.textContent=t; el1.className='timer-val'+cls; }
+    if(el2){ el2.textContent=t; el2.className='timer-val'+cls; }
   }, 1000);
 }
 
-function renderQ() {
-  const q = Q[cur];
-  document.getElementById('q-number').textContent = `ВОПРОС ${String(cur+1).padStart(2,'0')} из ${Q.length}`;
+function updateProgress() {
+  const pct = Math.round(cur / ALL.length * 100);
+  const progText = `Шаг ${cur+1} из ${ALL.length}`;
+  ['prog-text','th-prog-text'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=progText; });
+  ['prog-pct','th-prog-pct'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=pct+'%'; });
+  ['prog-fill','th-prog-fill'].forEach(id => { const el=document.getElementById(id); if(el) el.style.width=pct+'%'; });
+}
+
+function renderCurrent() {
+  if (cur >= ALL.length) {
+    clearInterval(timerInterval);
+    showResult();
+    return;
+  }
+  const item = ALL[cur];
+  updateProgress();
+
+  if (item.t === 'theory') {
+    renderTheory(item);
+  } else {
+    renderQuestion(item);
+  }
+}
+
+function renderTheory(item) {
+  document.getElementById('th-block').textContent = item.b;
+  document.getElementById('th-title').textContent = item.q;
+  document.getElementById('th-content').textContent = item.a;
+  show('screen-theory');
+}
+
+function advanceFromTheory() {
+  cur++;
+  renderCurrent();
+}
+
+function renderQuestion(q) {
+  qNum = ans.length + 1;
+  document.getElementById('q-number').textContent = `ВОПРОС ${String(qNum).padStart(2,'0')} из ${totalQ}`;
   document.getElementById('q-text').textContent = q.q;
   document.getElementById('block-badge').textContent = q.b;
-  const pct = Math.round(cur/Q.length*100);
-  document.getElementById('prog-text').textContent = `Вопрос ${cur+1} из ${Q.length}`;
-  document.getElementById('prog-pct').textContent = pct+'%';
-  document.getElementById('prog-fill').style.width = pct+'%';
   const inp = document.getElementById('q-input');
   if (q.t === 'choice' && q.opts && q.opts.length) {
     inp.innerHTML = '<div class="options">'+q.opts.map((o,i)=>
@@ -320,46 +402,39 @@ function renderQ() {
   } else {
     inp.innerHTML = '<textarea class="open-answer" id="open-inp" placeholder="Введите ваш ответ..."></textarea>';
   }
+  show('screen-question');
 }
 
 function selectOpt(el) {
-  document.querySelectorAll('.opt').forEach(o=>o.classList.remove('selected'));
+  document.querySelectorAll('.opt').forEach(o => o.classList.remove('selected'));
   el.classList.add('selected');
 }
 
 function submitAnswer() {
-  const q = Q[cur];
+  const q = ALL[cur];
   if (q.t === 'choice' && q.opts && q.opts.length) {
     const sel = document.querySelector('.opt.selected');
     if (!sel) { alert('Выберите вариант ответа'); return; }
     const idx = parseInt(sel.getAttribute('data-idx'));
-    // Правильный ответ — тот вариант, который совпадает с эталоном (первое слово/фраза)
-    const correctText = q.a.split('—')[0].trim().toLowerCase();
-    const isCorrect = q.opts[idx].toLowerCase().includes(correctText) || correctText.includes(q.opts[idx].toLowerCase().split(' ')[0]);
-    // Fallback: правильный всегда индекс 0 если не определили — используем сравнение строк
     const correctIdx = q.opts.findIndex(o => {
       const ot = o.toLowerCase().trim();
-      const at = q.a.toLowerCase();
-      return at.includes(ot) || ot.includes(q.a.toLowerCase().split(' ').slice(0,3).join(' '));
+      const at = q.a.toLowerCase().trim();
+      return at.startsWith(ot) || ot.startsWith(at.split(' ').slice(0,3).join(' ')) || at.includes(ot);
     });
-    const finalCorrect = correctIdx >= 0 ? idx === correctIdx : false;
-    ans.push({q, userAnswer:q.opts[idx], correct:finalCorrect, type:'choice', skipped:false});
+    ans.push({q, userAnswer:q.opts[idx], correct: correctIdx>=0 ? idx===correctIdx : false, type:'choice', skipped:false});
   } else {
     const val = (document.getElementById('open-inp')||{}).value||'';
     if (!val.trim()) { alert('Введите ответ'); return; }
     ans.push({q, userAnswer:val.trim(), correct:null, type:'open', skipped:false});
   }
-  advance();
+  cur++;
+  renderCurrent();
 }
 
 function skipQuestion() {
-  ans.push({q:Q[cur], userAnswer:'', correct:false, type:Q[cur].t, skipped:true});
-  advance();
-}
-
-function advance() {
-  if (cur < Q.length-1) { cur++; renderQ(); }
-  else { clearInterval(timerInterval); showResult(); }
+  ans.push({q:ALL[cur], userAnswer:'', correct:false, type:ALL[cur].t, skipped:true});
+  cur++;
+  renderCurrent();
 }
 
 async function showResult() {
@@ -377,10 +452,8 @@ async function showResult() {
   document.getElementById('res-wrong').textContent = wrong;
   document.getElementById('res-open').textContent = open;
   document.getElementById('res-skip').textContent = skipped;
-  const title = pct>=85?'Отличный результат! 🎉':pct>=65?'Хороший результат 👍':'Есть над чем поработать 📚';
-  const sub = pct>=85?'Уверенно знаете регламенты!':pct>=65?'Основу знаете, но есть пробелы':'Рекомендуем повторить регламент';
-  document.getElementById('res-title').textContent = title;
-  document.getElementById('res-sub').textContent = sub;
+  document.getElementById('res-title').textContent = pct>=85?'Отличный результат! 🎉':pct>=65?'Хороший результат 👍':'Есть над чем поработать 📚';
+  document.getElementById('res-sub').textContent = pct>=85?'Уверенно знаете регламенты!':pct>=65?'Основу знаете, но есть пробелы':'Рекомендуем повторить регламент';
   show('screen-result');
 
   const payload = {
@@ -388,7 +461,7 @@ async function showResult() {
     date: new Date().toLocaleString('ru-RU'),
     name:userInfo.name, tg:userInfo.tg, dept:userInfo.dept,
     score:pct, correct, wrong, open, skipped,
-    totalQuestions:Q.length, timeSpent:timeStr,
+    totalQuestions:totalQ, timeSpent:timeStr,
     answers: ans.map(a=>({
       block:a.q.b, question:a.q.q, type:a.type,
       userAnswer:a.userAnswer||'', correctAnswer:a.q.a,
@@ -398,7 +471,7 @@ async function showResult() {
 
   const box = document.getElementById('save-box');
   try {
-    await fetch(SHEET_URL, { method:'POST', mode:'no-cors', body:JSON.stringify(payload) });
+    await fetch(SHEET_URL, {method:'POST', mode:'no-cors', body:JSON.stringify(payload)});
     box.className='save-box saved';
     box.innerHTML='<h3 style="color:var(--accent3)">✅ Результат сохранён!</h3><p>Данные записаны в таблицу руководителя — всё готово.</p>';
   } catch(e) {
