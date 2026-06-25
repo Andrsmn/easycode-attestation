@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Аттестация — EasyCode Забота КС</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Onest:wght@300;400;500;600&display=swap');
+:root{
+  --bg:#05080f;
+  --surface:#0a1628;
+  --surface2:#0f1e35;
+  --border:#1a2e4a;
+  --accent:#3d8ef8;
+  --accent2:#ff6b8a;
+  --accent3:#38d9a9;
+  --accent4:#fcc419;
+  --accent5:#74c0fc;
+  --text:#e8f0fe;
+  --muted:#6b8cba;
+  --radius:12px;
+  --grad:linear-gradient(135deg,#1a3a6b 0%,#0d1f3c 100%);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Onest',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 50%,rgba(61,142,248,.08) 0%,transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(116,192,252,.06) 0%,transparent 50%);pointer-events:none;z-index:0}
+
+.screen{display:none;min-height:100vh;position:relative;z-index:1}
+.center{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 20px;text-align:center}
+
+.badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent5);background:rgba(61,142,248,.12);border:1px solid rgba(61,142,248,.3);padding:5px 18px;border-radius:100px;margin-bottom:24px}
+
+h1{font-family:'Unbounded',sans-serif;font-size:clamp(22px,4vw,42px);font-weight:900;line-height:1.1;margin-bottom:16px;background:linear-gradient(135deg,#ffffff 0%,#74c0fc 50%,#3d8ef8 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+.subtitle{color:var(--muted);font-size:15px;max-width:480px;margin:0 auto 36px}
+
+.meta-grid{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-bottom:40px}
+.meta-card{background:linear-gradient(135deg,var(--surface) 0%,var(--surface2) 100%);border:1px solid var(--border);border-radius:var(--radius);padding:16px 24px;text-align:center;position:relative;overflow:hidden}
+.meta-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent5))}
+.meta-card .num{font-family:'Unbounded',sans-serif;font-size:28px;font-weight:900;background:linear-gradient(135deg,var(--accent5),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.meta-card .label{font-size:12px;color:var(--muted);margin-top:4px}
+
+.box{background:linear-gradient(135deg,var(--surface) 0%,var(--surface2) 100%);border:1px solid var(--border);border-radius:16px;padding:32px;max-width:420px;width:100%;text-align:left;margin-bottom:28px;position:relative;overflow:hidden}
+.box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#1a3a6b,var(--accent),var(--accent5))}
+.box h2{font-family:'Unbounded',sans-serif;font-size:15px;font-weight:700;margin-bottom:24px;text-align:center;color:var(--text)}
+.box p{font-size:14px;color:var(--muted);margin-bottom:24px;line-height:1.5;text-align:center}
+
+.field{margin-bottom:18px}
+.field label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:7px;letter-spacing:1px;text-transform:uppercase}
+.field input{width:100%;background:rgba(61,142,248,.06);border:1px solid var(--border);border-radius:8px;padding:12px 16px;font-family:'Onest',sans-serif;font-size:15px;color:var(--text);outline:none;transition:border-color .2s,background .2s}
+.field input:focus{border-color:var(--accent);background:rgba(61,142,248,.1)}
+.field input::placeholder{color:var(--muted)}
+.field-hint{font-size:12px;color:var(--muted);margin-top:5px}
+.err{color:var(--accent2);font-size:13px;margin-top:10px;min-height:18px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,var(--accent),#1a6fd4);color:#fff;font-family:'Onest',sans-serif;font-size:15px;font-weight:600;padding:13px 32px;border-radius:100px;border:none;cursor:pointer;transition:transform .15s,box-shadow .15s;position:relative;overflow:hidden}
+.btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.1),transparent);opacity:0;transition:opacity .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(61,142,248,.4)}
+.btn:hover::before{opacity:1}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.btn.secondary{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+.btn.secondary:hover{box-shadow:0 8px 24px rgba(0,0,0,.3);border-color:var(--accent)}
+.btn.full{width:100%}
+
+.spinner{width:48px;height:48px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* THEORY */
+#screen-theory{display:none;min-height:100vh;position:relative;z-index:1}
+.theory-layout{display:grid;grid-template-rows:auto 1fr auto;min-height:100vh}
+.theory-header{padding:16px 32px;border-bottom:1px solid var(--border);background:rgba(10,22,40,.8);backdrop-filter:blur(10px);display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.theory-body{padding:40px 32px;max-width:800px;margin:0 auto;width:100%}
+.theory-block-badge{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:5px 14px;border-radius:100px;background:rgba(252,196,25,.1);color:var(--accent4);border:1px solid rgba(252,196,25,.3);margin-bottom:20px;display:inline-block}
+.theory-title{font-family:'Unbounded',sans-serif;font-size:clamp(18px,2.5vw,28px);font-weight:900;margin-bottom:24px;line-height:1.2;background:linear-gradient(135deg,#fff,var(--accent5));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.theory-content{font-size:15px;line-height:1.9;color:var(--text);background:linear-gradient(135deg,var(--surface),var(--surface2));border:1px solid var(--border);border-radius:16px;padding:28px 32px;white-space:pre-wrap;border-left:4px solid var(--accent);position:relative;overflow:hidden}
+.theory-content::before{content:'';position:absolute;top:0;right:0;width:200px;height:200px;background:radial-gradient(circle,rgba(61,142,248,.05),transparent);pointer-events:none}
+.theory-footer{padding:20px 32px;border-top:1px solid var(--border);background:rgba(10,22,40,.8);backdrop-filter:blur(10px);display:flex;justify-content:space-between;align-items:center;gap:12px}
+.theory-hint{font-size:13px;color:var(--muted)}
+.btn.theory-btn{background:linear-gradient(135deg,var(--accent4),#e67700);color:#1a0a00}
+.btn.theory-btn:hover{box-shadow:0 8px 32px rgba(252,196,25,.4)}
+
+.progress-bar{height:3px;background:var(--border);border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent5));border-radius:4px;transition:width .4s ease}
+.progress-label{font-size:12px;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between}
+
+/* QUESTION */
+#screen-question{display:none;min-height:100vh;position:relative;z-index:1}
+.q-layout{display:grid;grid-template-rows:auto 1fr auto;min-height:100vh}
+.q-header{padding:16px 32px;border-bottom:1px solid var(--border);background:rgba(10,22,40,.9);backdrop-filter:blur(10px);display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.user-chip{display:flex;align-items:center;gap:8px;background:rgba(61,142,248,.1);border:1px solid rgba(61,142,248,.2);border-radius:100px;padding:6px 14px;font-size:13px;color:var(--muted)}
+.user-chip strong{color:var(--text)}
+.progress-wrap{flex:1;min-width:180px}
+.block-badge{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:4px 12px;border-radius:100px;background:rgba(61,142,248,.1);color:var(--accent5);border:1px solid rgba(61,142,248,.25);white-space:nowrap}
+.timer-wrap{display:flex;align-items:center;gap:8px;background:rgba(61,142,248,.08);border:1px solid var(--border);border-radius:100px;padding:6px 16px}
+.timer-val{font-family:'Unbounded',sans-serif;font-size:14px;font-weight:700;color:var(--text);min-width:52px;text-align:center}
+.timer-val.warn{color:var(--accent4)}.timer-val.danger{color:var(--accent2)}
+
+.q-body{padding:40px 32px;max-width:780px;margin:0 auto;width:100%;display:flex;flex-direction:column;justify-content:center}
+.q-number{font-family:'Unbounded',sans-serif;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:3px;margin-bottom:14px}
+.q-text{font-size:clamp(17px,2.2vw,22px);font-weight:500;line-height:1.6;margin-bottom:28px;color:var(--text)}
+
+.options{display:flex;flex-direction:column;gap:10px}
+.opt{background:linear-gradient(135deg,var(--surface),var(--surface2));border:1px solid var(--border);border-radius:var(--radius);padding:15px 20px;cursor:pointer;font-size:15px;text-align:left;color:var(--text);transition:all .15s;width:100%;font-family:'Onest',sans-serif;position:relative;overflow:hidden}
+.opt::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--accent),var(--accent5));transform:scaleY(0);transition:transform .2s}
+.opt:hover{border-color:rgba(61,142,248,.4);background:rgba(61,142,248,.08)}
+.opt:hover::before{transform:scaleY(1)}
+.opt.selected{border-color:var(--accent);background:rgba(61,142,248,.12)}
+.opt.selected::before{transform:scaleY(1)}
+
+.open-answer{width:100%;background:rgba(61,142,248,.05);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;font-family:'Onest',sans-serif;font-size:15px;color:var(--text);resize:vertical;min-height:120px;outline:none;transition:border-color .2s,background .2s;line-height:1.7}
+.open-answer:focus{border-color:var(--accent);background:rgba(61,142,248,.08)}
+.open-answer::placeholder{color:var(--muted)}
+
+.q-footer{padding:16px 32px;border-top:1px solid var(--border);background:rgba(10,22,40,.9);backdrop-filter:blur(10px);display:flex;justify-content:space-between;align-items:center}
+.skip-btn{background:none;border:none;color:var(--muted);font-family:'Onest',sans-serif;font-size:14px;cursor:pointer;padding:8px 0;text-decoration:underline;text-underline-offset:3px}
+.skip-btn:hover{color:var(--accent5)}
+
+/* RESULT */
+.score-circle{width:160px;height:160px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 32px;background:linear-gradient(135deg,var(--surface),var(--surface2));border:2px solid var(--accent);box-shadow:0 0 40px rgba(61,142,248,.2),inset 0 0 20px rgba(61,142,248,.05)}
+.score-num{font-family:'Unbounded',sans-serif;font-size:42px;font-weight:900;background:linear-gradient(135deg,var(--accent5),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.score-label{font-size:12px;color:var(--muted);margin-top:2px}
+.result-title{font-family:'Unbounded',sans-serif;font-size:clamp(18px,3vw,30px);font-weight:900;margin-bottom:12px;background:linear-gradient(135deg,#fff,var(--accent5));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.result-sub{color:var(--muted);font-size:15px;margin-bottom:32px}
+.stats-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:28px}
+.stat-card{background:linear-gradient(135deg,var(--surface),var(--surface2));border:1px solid var(--border);border-radius:var(--radius);padding:18px 24px;text-align:center;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent5))}
+.stat-card .snum{font-family:'Unbounded',sans-serif;font-size:28px;font-weight:900}
+.stat-card .slabel{font-size:12px;color:var(--muted);margin-top:4px}
+.save-box{border-radius:12px;padding:18px 22px;margin-bottom:28px;border:1px solid var(--border);background:var(--surface);max-width:500px;width:100%}
+.save-box.saving{border-color:var(--accent4);background:rgba(252,196,25,.05)}
+.save-box.saved{border-color:var(--accent3);background:rgba(56,217,169,.05)}
+.save-box.error{border-color:var(--accent2);background:rgba(255,107,138,.05)}
+.save-box h3{font-size:14px;font-weight:700;margin-bottom:6px}
+.save-box p{font-size:13px;color:var(--muted);line-height:1.6}
+.green{color:var(--accent3)}.red{color:var(--accent2)}.yellow{color:var(--accent4)}
+.btn-row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+
+/* REVIEW */
+#screen-review{display:none;padding:40px 20px 80px;position:relative;z-index:1}
+.review-inner{max-width:780px;margin:0 auto}
+.review-head{display:flex;align-items:center;gap:16px;margin-bottom:32px;flex-wrap:wrap}
+.review-title{font-family:'Unbounded',sans-serif;font-size:22px;font-weight:900;background:linear-gradient(135deg,#fff,var(--accent5));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.review-item{background:linear-gradient(135deg,var(--surface),var(--surface2));border:1px solid var(--border);border-radius:var(--radius);padding:18px 22px;margin-bottom:14px}
+.review-item.r-correct{border-left:3px solid var(--accent3)}
+.review-item.r-open{border-left:3px solid var(--accent)}
+.review-item.r-wrong{border-left:3px solid var(--accent2)}
+.r-block{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.r-q{font-size:15px;font-weight:500;margin-bottom:10px;line-height:1.5}
+.r-lbl{font-size:12px;color:var(--muted);margin-bottom:3px}
+.r-val{font-size:14px;color:var(--text);background:rgba(255,255,255,.04);border-radius:8px;padding:8px 12px;margin-bottom:10px;border:1px solid var(--border)}
+.r-ref-lbl{font-size:12px;color:var(--accent3);margin-bottom:3px;font-weight:600}
+.r-ref-val{font-size:14px;color:#b8ffd8;background:rgba(56,217,169,.06);border-radius:8px;padding:8px 12px;border:1px solid rgba(56,217,169,.2)}
+.r-skipped{font-size:14px;color:var(--accent2);font-style:italic}
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+.fbtn{font-size:12px;padding:5px 14px;border-radius:100px;border:1px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;font-family:'Onest',sans-serif;transition:all .15s}
+.fbtn.active,.fbtn:hover{border-color:var(--accent);color:var(--accent5);background:rgba(61,142,248,.1)}
+@media(max-width:600px){
+  .q-header,.q-body,.q-footer,.theory-header,.theory-body,.theory-footer{padding-left:16px;padding-right:16px}
+  .q-body,.theory-body{padding-top:24px;padding-bottom:24px}
+  .theory-content{padding:20px}
+}
+</style>
+</head>
+<body>
+
+<!-- ПАРОЛЬ -->
+<div id="screen-password" class="screen" style="display:block">
+  <div class="center">
+    <div class="badge">Аттестация сотрудников</div>
+    <h1>EasyCode Забота КС</h1>
+    <p class="subtitle">Введите пароль, полученный от руководителя</p>
+    <div class="box">
+      <h2>🔒 Вход</h2>
+      <p>Пароль выдаётся перед прохождением аттестации</p>
+      <div class="field">
+        <input type="password" id="pw-inp" placeholder="Введите пароль..." onkeydown="if(event.key==='Enter')checkPw()" />
+      </div>
+      <button class="btn full" onclick="checkPw()">Войти →</button>
+      <div class="err" id="pw-error"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ЗАГРУЗКА -->
+<div id="screen-loading" class="screen">
+  <div class="center">
+    <div class="spinner"></div>
+    <div style="color:var(--muted);font-size:15px">Загружаем материалы из базы...</div>
+  </div>
+</div>
+
+<!-- РЕГИСТРАЦИЯ -->
+<div id="screen-register" class="screen">
+  <div class="center">
+    <div class="badge">Аттестация сотрудников</div>
+    <h1>Забота КС — Углублённый тест</h1>
+    <p class="subtitle">Бесплатные уроки · Отказы · Заморозки · Коммуникация · Каскад цен</p>
+    <div class="meta-grid">
+      <div class="meta-card"><div class="num" id="q-count">—</div><div class="label">вопросов</div></div>
+      <div class="meta-card"><div class="num" id="t-count">—</div><div class="label">блоков теории</div></div>
+      <div class="meta-card"><div class="num">~30</div><div class="label">минут</div></div>
+    </div>
+    <div class="box">
+      <h2>Заполните перед началом</h2>
+      <div class="field">
+        <label>Ваше имя и фамилия</label>
+        <input type="text" id="inp-name" placeholder="Иван Иванов" />
+      </div>
+      <div class="field">
+        <label>Telegram-логин</label>
+        <input type="text" id="inp-tg" placeholder="@username" />
+        <div class="field-hint">Введите @логин — он используется для идентификации</div>
+      </div>
+      <div class="field">
+        <label>Отдел</label>
+        <input type="text" id="inp-dept" placeholder="Забота КС..." />
+      </div>
+      <button class="btn full" onclick="beginQuiz()">▶ Начать аттестацию</button>
+    </div>
+  </div>
+</div>
+
+<!-- ТЕОРИЯ -->
+<div id="screen-theory">
+  <div class="theory-layout">
+    <div class="theory-header">
+      <div class="user-chip">👤 <strong id="th-name"></strong> · <span id="th-tg" style="color:var(--accent5)"></span></div>
+      <div class="progress-wrap" style="flex:1;min-width:180px">
+        <div class="progress-label"><span id="th-prog-text"></span><span id="th-prog-pct"></span></div>
+        <div class="progress-bar"><div class="progress-fill" id="th-prog-fill" style="width:0%"></div></div>
+      </div>
+      <div class="timer-wrap"><span>⏱</span><span class="timer-val" id="th-timer">00:00</span></div>
+    </div>
+    <div class="theory-body">
+      <div class="theory-block-badge" id="th-block"></div>
+      <div class="theory-title" id="th-title"></div>
+      <div class="theory-content" id="th-content"></div>
+    </div>
+    <div class="theory-footer">
+      <div class="theory-hint">📖 Прочитайте внимательно — далее будут вопросы по этой теме</div>
+      <button class="btn theory-btn" onclick="advanceFromTheory()">Понятно, продолжить →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ВОПРОС -->
+<div id="screen-question">
+  <div class="q-layout">
+    <div class="q-header">
+      <div class="user-chip">👤 <strong id="header-name"></strong> · <span id="header-tg" style="color:var(--accent5)"></span></div>
+      <div class="progress-wrap">
+        <div class="progress-label"><span id="prog-text"></span><span id="prog-pct"></span></div>
+        <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+      </div>
+      <div class="block-badge" id="block-badge"></div>
+      <div class="timer-wrap"><span>⏱</span><span class="timer-val" id="timer-val">00:00</span></div>
+    </div>
+    <div class="q-body">
+      <div class="q-number" id="q-number"></div>
+      <div class="q-text" id="q-text"></div>
+      <div id="q-input"></div>
+    </div>
+    <div class="q-footer">
+      <button class="skip-btn" onclick="skipQuestion()">Пропустить →</button>
+      <button class="btn" onclick="submitAnswer()">Ответить</button>
+    </div>
+  </div>
+</div>
+
+<!-- РЕЗУЛЬТАТ -->
+<div id="screen-result" class="screen">
+  <div class="center">
+    <div class="score-circle">
+      <div class="score-num" id="res-pct">—</div>
+      <div class="score-label">результат</div>
+    </div>
+    <div class="result-title" id="res-title"></div>
+    <div class="result-sub" id="res-sub"></div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="snum green" id="res-correct">0</div><div class="slabel">верных</div></div>
+      <div class="stat-card"><div class="snum red" id="res-wrong">0</div><div class="slabel">ошибок</div></div>
+      <div class="stat-card"><div class="snum yellow" id="res-open">0</div><div class="slabel">открытых</div></div>
+      <div class="stat-card"><div class="snum" style="color:var(--muted)" id="res-skip">0</div><div class="slabel">пропущено</div></div>
+    </div>
+    <div class="save-box saving" id="save-box">
+      <h3 style="color:var(--accent4)">⏳ Сохраняем результат...</h3>
+      <p>Данные отправляются в Google таблицу руководителя</p>
+    </div>
+    <div class="btn-row">
+      <button class="btn" onclick="showReview()">📋 Разбор ответов</button>
+      <button class="btn secondary" onclick="restartQuiz()">↺ Пройти заново</button>
+    </div>
+  </div>
+</div>
+
+<!-- РАЗБОР -->
+<div id="screen-review">
+  <div class="review-inner">
+    <div class="review-head">
+      <button class="btn secondary" onclick="show('screen-result')" style="padding:10px 20px;font-size:14px">← Назад</button>
+      <div class="review-title">Разбор ответов</div>
+    </div>
+    <div class="filter-bar" id="filter-bar"></div>
+    <div id="review-list"></div>
+  </div>
+</div>
+
+<script>
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxO8MbQjxx-Usp0Dv92I3D0QQGu2IbeHcJ7cdqbm23s_aBDYU448MbAba-RaCfmUum4/exec';
+const STAFF_PASSWORD = 'zabota2026';
+
+let ALL = [], cur = 0, ans = [], totalQ = 0;
+let timerSec = 0, timerInterval = null;
+let userInfo = {name:'', tg:'', dept:''};
+
+function show(id) {
+  ['screen-password','screen-loading','screen-register','screen-theory',
+   'screen-question','screen-result','screen-review']
+    .forEach(s => document.getElementById(s).style.display = 'none');
+  document.getElementById(id).style.display = 'block';
+}
+
+function checkPw() {
+  const v = document.getElementById('pw-inp').value;
+  if (v === STAFF_PASSWORD) { show('screen-loading'); loadQuestions(); }
+  else {
+    document.getElementById('pw-error').textContent = 'Неверный пароль. Попробуйте ещё раз.';
+    document.getElementById('pw-inp').value = '';
+    document.getElementById('pw-inp').focus();
+  }
+}
+
+async function loadQuestions() {
+  try {
+    const resp = await fetch(SHEET_URL + '?type=questions');
+    const data = await resp.json();
+    if (!data || !data.length) throw new Error('Материалы не найдены в таблице');
+    ALL = data;
+    totalQ = ALL.filter(r => r.t !== 'theory').length;
+    const theoryCount = ALL.filter(r => r.t === 'theory').length;
+    document.getElementById('q-count').textContent = totalQ;
+    document.getElementById('t-count').textContent = theoryCount;
+    show('screen-register');
+  } catch(e) {
+    document.getElementById('screen-loading').innerHTML =
+      `<div class="center"><div style="color:var(--accent2);font-size:16px;max-width:400px;text-align:center">
+        ⚠️ Не удалось загрузить материалы.<br><br>${e.message}<br><br>
+        <button class="btn secondary" onclick="location.reload()">Попробовать снова</button>
+      </div></div>`;
+  }
+}
+
+function beginQuiz() {
+  const name = document.getElementById('inp-name').value.trim();
+  const tg = document.getElementById('inp-tg').value.trim();
+  const dept = document.getElementById('inp-dept').value.trim();
+  if (!name) { alert('Введите имя'); document.getElementById('inp-name').focus(); return; }
+  if (!tg) { alert('Введите Telegram-логин'); document.getElementById('inp-tg').focus(); return; }
+  userInfo = { name, tg: tg.startsWith('@') ? tg : '@'+tg, dept };
+  document.getElementById('header-name').textContent = name;
+  document.getElementById('header-tg').textContent = userInfo.tg;
+  document.getElementById('th-name').textContent = name;
+  document.getElementById('th-tg').textContent = userInfo.tg;
+  cur = 0; ans = []; timerSec = 0;
+  startTimer(); renderCurrent();
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    timerSec++;
+    const m = Math.floor(timerSec/60), s = timerSec%60;
+    const t = String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    const cls = timerSec>2400?' danger':timerSec>1800?' warn':'';
+    ['timer-val','th-timer'].forEach(id => {
+      const el = document.getElementById(id);
+      if(el){ el.textContent=t; el.className='timer-val'+cls; }
+    });
+  }, 1000);
+}
+
+function updateProgress() {
+  const pct = Math.round(cur / ALL.length * 100);
+  const text = `Шаг ${cur+1} из ${ALL.length}`;
+  ['prog-text','th-prog-text'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=text; });
+  ['prog-pct','th-prog-pct'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=pct+'%'; });
+  ['prog-fill','th-prog-fill'].forEach(id => { const el=document.getElementById(id); if(el) el.style.width=pct+'%'; });
+}
+
+function renderCurrent() {
+  if (cur >= ALL.length) { clearInterval(timerInterval); showResult(); return; }
+  updateProgress();
+  const item = ALL[cur];
+  if (item.t === 'theory') renderTheory(item);
+  else renderQuestion(item);
+}
+
+function renderTheory(item) {
+  document.getElementById('th-block').textContent = item.b;
+  document.getElementById('th-title').textContent = item.q;
+  document.getElementById('th-content').textContent = item.a;
+  show('screen-theory');
+}
+
+function advanceFromTheory() { cur++; renderCurrent(); }
+
+function renderQuestion(q) {
+  const qNum = ans.length + 1;
+  document.getElementById('q-number').textContent = `ВОПРОС ${String(qNum).padStart(2,'0')} из ${totalQ}`;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('block-badge').textContent = q.b;
+  const inp = document.getElementById('q-input');
+  if (q.t === 'choice' && q.opts && q.opts.length) {
+    inp.innerHTML = '<div class="options">'+q.opts.map((o,i)=>
+      `<button class="opt" data-idx="${i}" onclick="selectOpt(this)">${o}</button>`
+    ).join('')+'</div>';
+  } else {
+    inp.innerHTML = '<textarea class="open-answer" id="open-inp" placeholder="Введите ваш ответ..."></textarea>';
+  }
+  show('screen-question');
+}
+
+function selectOpt(el) {
+  document.querySelectorAll('.opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function submitAnswer() {
+  const q = ALL[cur];
+  if (q.t === 'choice' && q.opts && q.opts.length) {
+    const sel = document.querySelector('.opt.selected');
+    if (!sel) { alert('Выберите вариант ответа'); return; }
+    const idx = parseInt(sel.getAttribute('data-idx'));
+    const correctAnswer = q.a.toLowerCase().trim();
+    const correctIdx = q.opts.findIndex(o => {
+      const opt = o.toLowerCase().trim();
+      return opt === correctAnswer ||
+             correctAnswer.startsWith(opt) ||
+             opt.startsWith(correctAnswer) ||
+             correctAnswer.includes(opt) ||
+             opt.includes(correctAnswer);
+    });
+    ans.push({q, userAnswer:q.opts[idx], correct: correctIdx>=0 ? idx===correctIdx : false, type:'choice', skipped:false});
+  } else {
+    const val = (document.getElementById('open-inp')||{}).value||'';
+    if (!val.trim()) { alert('Введите ответ'); return; }
+    ans.push({q, userAnswer:val.trim(), correct:null, type:'open', skipped:false});
+  }
+  cur++; renderCurrent();
+}
+
+function skipQuestion() {
+  ans.push({q:ALL[cur], userAnswer:'', correct:false, type:ALL[cur].t, skipped:true});
+  cur++; renderCurrent();
+}
+
+async function showResult() {
+  const correct = ans.filter(a=>a.correct===true).length;
+  const wrong = ans.filter(a=>a.correct===false&&!a.skipped).length;
+  const open = ans.filter(a=>a.correct===null).length;
+  const skipped = ans.filter(a=>a.skipped).length;
+  const choiceTotal = ans.filter(a=>a.type==='choice').length;
+  const pct = choiceTotal>0 ? Math.round(correct/choiceTotal*100) : 0;
+  const m=Math.floor(timerSec/60), s=timerSec%60;
+  const timeStr = String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+
+  document.getElementById('res-pct').textContent = pct+'%';
+  document.getElementById('res-correct').textContent = correct;
+  document.getElementById('res-wrong').textContent = wrong;
+  document.getElementById('res-open').textContent = open;
+  document.getElementById('res-skip').textContent = skipped;
+  document.getElementById('res-title').textContent = pct>=85?'Отличный результат! 🎉':pct>=65?'Хороший результат 👍':'Есть над чем поработать 📚';
+  document.getElementById('res-sub').textContent = pct>=85?'Уверенно знаете регламенты!':pct>=65?'Основу знаете, но есть пробелы':'Рекомендуем повторить регламент';
+  show('screen-result');
+
+  const payload = {
+    type:'result', date:new Date().toLocaleString('ru-RU'),
+    name:userInfo.name, tg:userInfo.tg, dept:userInfo.dept,
+    score:pct, correct, wrong, open, skipped,
+    totalQuestions:totalQ, timeSpent:timeStr,
+    answers: ans.map(a=>({
+      block:a.q.b, question:a.q.q, type:a.type,
+      userAnswer:a.userAnswer||'', correctAnswer:a.q.a,
+      correct:a.correct, skipped:a.skipped
+    }))
+  };
+
+  const box = document.getElementById('save-box');
+  try {
+    await fetch(SHEET_URL, {method:'POST', mode:'no-cors', body:JSON.stringify(payload)});
+    box.className='save-box saved';
+    box.innerHTML='<h3 style="color:var(--accent3)">✅ Результат сохранён!</h3><p>Данные записаны в таблицу руководителя — всё готово.</p>';
+  } catch(e) {
+    box.className='save-box error';
+    box.innerHTML='<h3 style="color:var(--accent2)">⚠️ Не удалось сохранить</h3><p>Сделай скриншот и отправь руководителю в Telegram.</p>';
+  }
+}
+
+function showReview() {
+  const blocks = [...new Set(ans.map(a=>a.q.b))];
+  document.getElementById('filter-bar').innerHTML =
+    '<button class="fbtn active" onclick="filterReview(\'all\',this)">Все</button>' +
+    blocks.map(b=>`<button class="fbtn" onclick="filterReview('${b.replace(/'/g,"\\'")}',this)">${b}</button>`).join('');
+  renderReview('all'); show('screen-review');
+}
+
+function filterReview(block, btn) {
+  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); renderReview(block);
+}
+
+function renderReview(block) {
+  const filtered = block==='all' ? ans : ans.filter(a=>a.q.b===block);
+  document.getElementById('review-list').innerHTML = filtered.map(a => {
+    const idx = ans.indexOf(a);
+    let cls='r-open', icon='🔵';
+    if (a.skipped) { cls='r-wrong'; icon='⬜'; }
+    else if (a.type==='choice') { cls=a.correct?'r-correct':'r-wrong'; icon=a.correct?'✅':'❌'; }
+    const userPart = a.skipped
+      ? '<div class="r-skipped">Пропущен</div>'
+      : `<div class="r-lbl">Ваш ответ</div><div class="r-val">${a.userAnswer||'—'}</div>`;
+    const refPart = (!a.correct||a.type==='open')
+      ? `<div class="r-ref-lbl">Эталонный ответ</div><div class="r-ref-val">${a.q.a}</div>` : '';
+    return `<div class="review-item ${cls}">
+      <div class="r-block">${a.q.b}</div>
+      <div class="r-q">${icon} Вопрос ${idx+1}: ${a.q.q}</div>
+      ${userPart}${refPart}
+    </div>`;
+  }).join('');
+}
+
+function restartQuiz() {
+  clearInterval(timerInterval);
+  show('screen-loading'); loadQuestions();
+}
+</script>
+</body>
+</html>
