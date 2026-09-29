@@ -404,8 +404,8 @@ function showResult(res, payload){
   const total = res.choiceTotal || 0, correct = res.correct || 0;
   const pct = total ? Math.round(correct / total * 100) : 0;
   render(`
-    <div class="eyebrow">Тест завершён</div>
-    <h1>Спасибо, <em>${esc((payload.name||'').split(' ').slice(-1)[0])}</em></h1>
+    <div class="eyebrow">${esc(payload.name || '')}</div>
+    <h1>Тест <em>завершён</em></h1>
     <p class="lead">Результат сохранён. Ниже — тестовая часть. Практические кейсы проверит руководитель, после этого сложится итоговый процент.</p>
     <div class="card">
       <div class="small muted">Тестовая часть</div>
