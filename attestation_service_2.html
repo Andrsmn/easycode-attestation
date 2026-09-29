@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>EasyCode · Аттестация сервиса</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c0c0e;
+  --surface:#141417;
+  --surface2:#1b1b1f;
+  --line:rgba(255,255,255,.07);
+  --line2:rgba(255,255,255,.13);
+  --text:#ece8df;
+  --muted:#8e8a82;
+  --dim:#5d5a55;
+  --gold:#c9a96b;
+  --gold2:#e3cc9a;
+  --goldsoft:rgba(201,169,107,.12);
+  --err:#d98b7e;
+  --ok:#9fbf8f;
+  --r:18px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--text)}
+body{
+  font-family:'Manrope',system-ui,sans-serif;font-size:16px;line-height:1.55;min-height:100vh;min-height:100dvh;
+  background:
+    radial-gradient(900px 500px at 85% -10%, rgba(201,169,107,.10), transparent 60%),
+    radial-gradient(700px 400px at -10% 110%, rgba(201,169,107,.05), transparent 60%),
+    var(--bg);
+  background-attachment:fixed;
+}
+.wrap{max-width:720px;margin:0 auto;padding:28px 16px 56px}
+header.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:40px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;letter-spacing:.14em;font-size:12px;text-transform:uppercase;color:var(--muted)}
+.brand i{width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 14px var(--gold)}
+.who{font-size:13px;color:var(--dim);text-align:right;max-width:55%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+h1{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(38px,8vw,56px);line-height:1.02;letter-spacing:-.01em;margin-bottom:14px}
+h1 em{font-style:italic;color:var(--gold2)}
+h2{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(28px,6vw,36px);line-height:1.12;margin-bottom:18px}
+.lead{color:var(--muted);max-width:520px;margin-bottom:34px}
+.eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:14px}
+
+.card{background:linear-gradient(180deg,var(--surface),#111114);border:1px solid var(--line);border-radius:var(--r);padding:28px;box-shadow:0 30px 60px -30px rgba(0,0,0,.7)}
+@media(max-width:520px){.card{padding:22px 18px}}
+
+.field{margin-bottom:18px}
+.field label{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;font-weight:600}
+.input,select.input,textarea.input{
+  width:100%;background:var(--surface2);border:1px solid var(--line);color:var(--text);border-radius:12px;
+  padding:14px 16px;font:inherit;outline:none;transition:border-color .2s,box-shadow .2s;appearance:none;-webkit-appearance:none
+}
+select.input{background-image:linear-gradient(45deg,transparent 50%,var(--gold) 50%),linear-gradient(135deg,var(--gold) 50%,transparent 50%);background-position:calc(100% - 22px) 55%,calc(100% - 16px) 55%;background-size:6px 6px;background-repeat:no-repeat;padding-right:44px;cursor:pointer}
+select.input option{background:#1b1b1f;color:var(--text)}
+.input:focus{border-color:rgba(201,169,107,.55);box-shadow:0 0 0 4px var(--goldsoft)}
+.input.bad{border-color:rgba(217,139,126,.6)}
+.hint{font-size:12.5px;color:var(--dim);margin-top:7px}
+.hint.err{color:var(--err)}
+textarea.input{min-height:180px;resize:vertical;line-height:1.55}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:560px){.row2{grid-template-columns:1fr}}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;border:0;cursor:pointer;font:inherit;font-weight:700;
+  font-size:15px;letter-spacing:.02em;padding:16px 26px;border-radius:999px;transition:transform .15s,opacity .2s,background .2s;
+  background:linear-gradient(180deg,var(--gold2),var(--gold));color:#17140d;min-width:180px
+}
+.btn:active{transform:scale(.98)}
+.btn[disabled]{opacity:.35;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line2)}
+.btn.block{width:100%}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px;align-items:center}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+
+/* progress */
+.prog{display:flex;align-items:center;gap:14px;margin-bottom:26px}
+.bar{flex:1;height:3px;background:var(--line);border-radius:3px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width .4s ease}
+.count{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+
+.qtext{font-size:clamp(19px,4.4vw,22px);font-weight:600;line-height:1.42;margin-bottom:24px;letter-spacing:-.005em}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{
+  display:flex;gap:14px;align-items:flex-start;text-align:left;width:100%;cursor:pointer;
+  background:var(--surface2);border:1px solid var(--line);border-radius:14px;padding:16px 18px;color:var(--text);font:inherit;
+  transition:border-color .18s,background .18s
+}
+.opt:hover{border-color:var(--line2)}
+.opt .dot{flex:0 0 20px;height:20px;border-radius:50%;border:1.5px solid var(--dim);margin-top:2px;position:relative;transition:border-color .18s}
+.opt.sel{border-color:rgba(201,169,107,.6);background:linear-gradient(180deg,rgba(201,169,107,.10),rgba(201,169,107,.04))}
+.opt.sel .dot{border-color:var(--gold)}
+.opt.sel .dot::after{content:"";position:absolute;inset:4px;border-radius:50%;background:var(--gold)}
+
+/* theory */
+.theory{color:#d9d4c9}
+.theory p{margin-bottom:12px}
+.theory ul{list-style:none;display:flex;flex-direction:column;gap:12px;margin:4px 0 14px}
+.theory li{position:relative;padding-left:22px}
+.theory li::before{content:"";position:absolute;left:2px;top:.72em;width:7px;height:1px;background:var(--gold)}
+.theory b{color:var(--gold2);font-weight:600}
+
+/* result */
+.score{font-family:'Cormorant Garamond',serif;font-size:clamp(72px,18vw,112px);line-height:1;color:var(--gold2);font-weight:500;margin:10px 0 6px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:26px}
+.stats div{background:var(--surface);padding:16px 14px}
+.stats b{display:block;font-size:22px;font-weight:600}
+.stats span{font-size:12px;color:var(--muted)}
+@media(max-width:480px){.stats{grid-template-columns:1fr}}
+
+.spinner{width:34px;height:34px;border-radius:50%;border:2px solid var(--line2);border-top-color:var(--gold);animation:spin 1s linear infinite;margin-bottom:22px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.note{border:1px solid var(--line);background:rgba(255,255,255,.02);border-radius:14px;padding:16px 18px;font-size:14px;color:var(--muted);margin-top:22px}
+.note b{color:var(--text)}
+.resume{border:1px solid rgba(201,169,107,.35);background:var(--goldsoft);border-radius:14px;padding:18px;margin-bottom:22px}
+.fade{animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.hidden{display:none!important}
+footer{margin-top:40px;text-align:center;font-size:12px;color:var(--dim);letter-spacing:.06em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><i></i>EasyCode · Сервис</div>
+    <div class="who" id="who"></div>
+  </header>
+  <main id="app"></main>
+  <footer>Аттестация сотрудников сервиса · 2026</footer>
+</div>
+
+<script>
+/* ================= НАСТРОЙКИ ================= */
+const SHEET_URL = 'ВСТАВЬТЕ_СЮДА_URL_ВЕБ_ПРИЛОЖЕНИЯ';
+const PASSWORD  = 'attest2026';
+const FALLBACK_DEPTS = ['Онбординг','Забота КС','Расписание КС','Техподдержка','Возвраты','Менторы'];
+const LS_STATE = 'ec_srv3_state';
+const LS_PENDING = 'ec_srv3_pending';
+
+/* ================= УТИЛИТЫ ================= */
+const $app = document.getElementById('app');
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ls = {
+  get(k){ try{ return JSON.parse(localStorage.getItem(k)); }catch(e){ return null; } },
+  set(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} },
+  del(k){ try{ localStorage.removeItem(k); }catch(e){} }
+};
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+function shuffle(a){ a = a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function uid(){ return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2,8); }
+function render(html){ $app.innerHTML = '<div class="fade">'+html+'</div>'; window.scrollTo({top:0,behavior:'smooth'}); }
+function richText(t){
+  const lines = String(t||'').split('\n');
+  let out = '', inList = false;
+  const fmt = s => esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
+  lines.forEach(l => {
+    const s = l.trim();
+    if (s.startsWith('•')) { if(!inList){ out+='<ul>'; inList=true; } out += '<li>'+fmt(s.replace(/^•\s*/,''))+'</li>'; }
+    else { if(inList){ out+='</ul>'; inList=false; } if(s) out += '<p>'+fmt(s)+'</p>'; }
+  });
+  if(inList) out+='</ul>';
+  return out;
+}
+
+/* ================= ДАННЫЕ ================= */
+let QUESTIONS = [];      // [{id,b,t,q,a,opts:[{i,t}]}]
+let DEPTS = FALLBACK_DEPTS;
+let S = null;            // состояние попытки
+let loadError = '';
+
+async function loadQuestions(){
+  const url = SHEET_URL + '?type=questions&_=' + Date.now();
+  for (let i=0;i<3;i++){
+    try{
+      const r = await fetch(url);
+      const d = await r.json();
+      if (d.ok && d.questions && d.questions.length){
+        QUESTIONS = d.questions;
+        if (d.departments && d.departments.length) DEPTS = d.departments;
+        return true;
+      }
+      loadError = d.error || 'Пустой список вопросов';
+    }catch(e){ loadError = 'Нет связи с таблицей'; }
+    await sleep(1200);
+  }
+  return false;
+}
+const gradable = () => QUESTIONS.filter(q => q.t !== 'theory');
+function saveState(){ if(S) ls.set(LS_STATE, S); }
+function setWho(){ document.getElementById('who').textContent = S ? S.name : ''; }
+
+/* ================= СТАРТ ================= */
+async function boot(){
+  render('<div class="spinner"></div><p class="muted">Загружаем тест…</p>');
+  const pending = ls.get(LS_PENDING);
+  if (pending){ return sendResult(pending); }
+  const ok = await loadQuestions();
+  if (!ok){
+    return render(`<div class="eyebrow">Ошибка</div><h2>Не удалось загрузить вопросы</h2>
+      <p class="muted">${esc(loadError)}. Проверьте интернет и обновите страницу.</p>
+      <div class="actions"><button class="btn" onclick="location.reload()">Обновить</button></div>`);
+  }
+  const saved = ls.get(LS_STATE);
+  showStart(saved && saved.attemptId ? saved : null);
+}
+
+function showStart(saved){
+  const opts = DEPTS.map(d => `<option value="${esc(d)}">${esc(d)}</option>`).join('');
+  render(`
+    <div class="eyebrow">Аттестация · все отделы сервиса</div>
+    <h1>Проверка знаний <em>регламентов</em></h1>
+    <p class="lead">${gradable().length} вопросов: теория по блокам, вопросы с выбором ответа и практические кейсы. Займёт около 40 минут. Прогресс сохраняется, если закрыть страницу.</p>
+    ${saved ? `<div class="resume">
+        <div class="eyebrow" style="margin-bottom:6px">Незавершённая попытка</div>
+        <div style="margin-bottom:14px">${esc(saved.name)} · ${esc(saved.dept)} — остановились на шаге ${saved.idx+1} из ${QUESTIONS.length}</div>
+        <div class="actions" style="margin-top:0">
+          <button class="btn" id="resume">Продолжить</button>
+          <button class="btn ghost" id="reset">Начать заново</button>
+        </div></div>` : ''}
+    <div class="card">
+      <div class="field"><label>Фамилия и имя</label>
+        <input class="input" id="name" autocomplete="name" placeholder="Иванова Мария">
+        <div class="hint" id="h-name"></div></div>
+      <div class="row2">
+        <div class="field"><label>Telegram</label>
+          <input class="input" id="tg" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="@username">
+          <div class="hint" id="h-tg"></div></div>
+        <div class="field"><label>Отдел</label>
+          <select class="input" id="dept"><option value="">Выберите отдел</option>${opts}</select>
+          <div class="hint" id="h-dept"></div></div>
+      </div>
+      <div class="field"><label>Пароль</label>
+        <input class="input" id="pwd" type="password" autocomplete="off" placeholder="Выдал руководитель">
+        <div class="hint" id="h-pwd"></div></div>
+      <button class="btn block" id="go">Начать тест</button>
+    </div>`);
+
+  if (saved){
+    document.getElementById('resume').onclick = () => { S = saved; setWho(); step(); };
+    document.getElementById('reset').onclick = () => { if(confirm('Удалить незавершённую попытку и начать заново?')){ ls.del(LS_STATE); showStart(null); } };
+  }
+  document.getElementById('go').onclick = start;
+  document.getElementById('pwd').addEventListener('keydown', e => { if(e.key==='Enter') start(); });
+}
+
+function start(){
+  const v = id => document.getElementById(id).value.trim();
+  const name = v('name').replace(/\s+/g,' ');
+  let tg = v('tg').replace(/^https?:\/\/t\.me\//i,'').replace(/^@+/,'');
+  const dept = v('dept'), pwd = v('pwd');
+  let ok = true;
+  const mark = (id, msg) => {
+    const el = document.getElementById(id), h = document.getElementById('h-'+id);
+    el.classList.toggle('bad', !!msg); h.textContent = msg || ''; h.classList.toggle('err', !!msg);
+    if (msg) ok = false;
+  };
+  mark('name', /^[A-Za-zА-Яа-яЁё\-]{2,}(\s+[A-Za-zА-Яа-яЁё\-]{2,})+$/.test(name) ? '' : 'Укажите фамилию и имя полностью');
+  mark('tg', /^[A-Za-z0-9_]{4,32}$/.test(tg) ? '' : 'Ник латиницей, например @ivanova_m');
+  mark('dept', dept ? '' : 'Выберите отдел из списка');
+  mark('pwd', pwd === PASSWORD ? '' : 'Неверный пароль');
+  if (!ok) return;
+
+  const orders = {};
+  QUESTIONS.forEach(q => { if (q.t === 'choice') orders[q.id] = shuffle(q.opts.map(o => o.i)); });
+  S = { attemptId: uid(), name, tg: '@'+tg, dept, startedAt: Date.now(), idx: 0, answers: {}, orders };
+  saveState(); setWho(); step();
+}
+
+/* ================= ПРОХОЖДЕНИЕ ================= */
+function progress(){
+  const g = gradable(); const done = g.filter(q => S.answers[q.id]).length;
+  return { done, total: g.length, pct: Math.round(done / g.length * 100) };
+}
+function progHTML(){
+  const p = progress();
+  return `<div class="prog"><div class="bar"><i style="width:${p.pct}%"></i></div><div class="count">${p.done} / ${p.total}</div></div>`;
+}
+
+function step(){
+  if (S.idx >= QUESTIONS.length) return finish();
+  const q = QUESTIONS[S.idx];
+  if (q.t === 'theory') return showTheory(q);
+  if (q.t === 'choice') return showChoice(q);
+  return showOpen(q);
+}
+function next(){ S.idx++; saveState(); step(); }
+
+function showTheory(q){
+  render(`${progHTML()}
+    <div class="eyebrow">${esc(q.b)} · теория</div>
+    <h2>${esc(q.q)}</h2>
+    <div class="card theory">${richText(q.a)}</div>
+    <div class="actions"><button class="btn" id="nx">Понятно, к вопросам</button></div>`);
+  document.getElementById('nx').onclick = next;
+}
+
+function showChoice(q){
+  const order = (S.orders[q.id] && S.orders[q.id].length) ? S.orders[q.id] : q.opts.map(o=>o.i);
+  const byI = {}; q.opts.forEach(o => byI[o.i] = o.t);
+  const prev = S.answers[q.id] ? S.answers[q.id].choice : null;
+  render(`${progHTML()}
+    <div class="eyebrow">${esc(q.b)}</div>
+    <div class="qtext">${esc(q.q)}</div>
+    <div class="opts">${order.filter(i => byI[i] !== undefined).map(i =>
+      `<button class="opt ${prev===i?'sel':''}" data-i="${i}"><span class="dot"></span><span>${esc(byI[i])}</span></button>`).join('')}</div>
+    <div class="actions"><button class="btn" id="ans" ${prev===null?'disabled':''}>Ответить</button></div>`);
+  let chosen = prev;
+  document.querySelectorAll('.opt').forEach(b => b.onclick = () => {
+    document.querySelectorAll('.opt').forEach(x => x.classList.remove('sel'));
+    b.classList.add('sel'); chosen = parseInt(b.dataset.i, 10);
+    document.getElementById('ans').disabled = false;
+  });
+  document.getElementById('ans').onclick = () => {
+    if (chosen === null) return;
+    S.answers[q.id] = { choice: chosen };
+    next();
+  };
+}
+
+function showOpen(q){
+  const prev = S.answers[q.id] ? S.answers[q.id].text : (S.drafts && S.drafts[q.id]) || '';
+  render(`${progHTML()}
+    <div class="eyebrow">${esc(q.b)} · развёрнутый ответ</div>
+    <div class="qtext">${esc(q.q)}</div>
+    <textarea class="input" id="txt" placeholder="Опишите действия по шагам: что проверите, что напишете клиенту, куда передадите…">${esc(prev)}</textarea>
+    <div class="hint" id="h-txt">Минимум 30 символов. Черновик сохраняется автоматически.</div>
+    <div class="actions"><button class="btn" id="ans">Ответить</button></div>`);
+  const ta = document.getElementById('txt');
+  let t;
+  ta.addEventListener('input', () => { clearTimeout(t); t = setTimeout(() => { S.drafts = S.drafts || {}; S.drafts[q.id] = ta.value; saveState(); }, 400); });
+  document.getElementById('ans').onclick = () => {
+    const v = ta.value.trim();
+    const h = document.getElementById('h-txt');
+    if (v.length < 30){ h.textContent = 'Ответ слишком короткий — опишите действия подробнее (минимум 30 символов).'; h.classList.add('err'); ta.classList.add('bad'); return; }
+    S.answers[q.id] = { text: v };
+    if (S.drafts) delete S.drafts[q.id];
+    next();
+  };
+}
+
+/* ================= ОТПРАВКА ================= */
+function finish(){
+  const payload = {
+    attemptId: S.attemptId, name: S.name, tg: S.tg, dept: S.dept,
+    startedAt: S.startedAt, finishedAt: Date.now(),
+    answers: gradable().map(q => {
+      const a = S.answers[q.id] || {};
+      return q.t === 'choice' ? { id: q.id, choice: (a.choice ?? null) } : { id: q.id, text: a.text || '' };
+    })
+  };
+  ls.set(LS_PENDING, payload);   // сначала сохраняем на устройстве
+  ls.del(LS_STATE);
+  sendResult(payload);
+}
+
+async function check(id){
+  try{
+    const r = await fetch(SHEET_URL + '?type=check&id=' + encodeURIComponent(id) + '&_=' + Date.now());
+    return await r.json();
+  }catch(e){ return null; }
+}
+
+async function sendResult(payload){
+  S = S || { name: payload.name }; setWho();
+  render(`<div class="spinner"></div><div class="eyebrow">Почти готово</div><h2>Сохраняем результат</h2>
+    <p class="muted">Не закрывайте страницу несколько секунд.</p>`);
+
+  // вдруг уже сохранено (повторный вход)
+  let res = await check(payload.attemptId);
+  if (!(res && res.saved)){
+    const body = JSON.stringify(payload);
+    try{
+      const ctrl = new AbortController(); const to = setTimeout(() => ctrl.abort(), 25000);
+      await fetch(SHEET_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body, signal: ctrl.signal });
+      clearTimeout(to);
+    }catch(e){
+      try{ navigator.sendBeacon && navigator.sendBeacon(SHEET_URL, new Blob([body], {type:'text/plain;charset=utf-8'})); }catch(x){}
+    }
+    for (let i=0;i<8;i++){
+      await sleep(i ? 2500 : 1500);
+      res = await check(payload.attemptId);
+      if (res && res.saved) break;
+    }
+  }
+
+  if (res && res.saved){
+    ls.del(LS_PENDING);
+    window.onbeforeunload = null;
+    return showResult(res, payload);
+  }
+  render(`<div class="eyebrow">Нет подтверждения</div><h2>Результат пока не дошёл до таблицы</h2>
+    <p class="muted">Ответы сохранены на этом устройстве, ничего не потеряно. Проверьте интернет и нажмите «Отправить ещё раз». Если не получается — не очищайте браузер и напишите Андрею.</p>
+    <div class="actions"><button class="btn" id="retry">Отправить ещё раз</button></div>`);
+  document.getElementById('retry').onclick = () => sendResult(payload);
+}
+
+function showResult(res, payload){
+  const total = res.choiceTotal || 0, correct = res.correct || 0;
+  const pct = total ? Math.round(correct / total * 100) : 0;
+  render(`
+    <div class="eyebrow">Тест завершён</div>
+    <h1>Спасибо, <em>${esc((payload.name||'').split(' ').slice(-1)[0])}</em></h1>
+    <p class="lead">Результат сохранён. Ниже — тестовая часть. Практические кейсы проверит руководитель, после этого сложится итоговый процент.</p>
+    <div class="card">
+      <div class="small muted">Тестовая часть</div>
+      <div class="score">${pct}%</div>
+      <div class="muted">${correct} из ${total} верных ответов</div>
+      <div class="stats">
+        <div><b>${correct}</b><span>верно</span></div>
+        <div><b>${total - correct}</b><span>неверно</span></div>
+        <div><b>${res.open || 0}</b><span>кейсов на проверке</span></div>
+      </div>
+    </div>
+    <div class="note">Разбор ошибок проведёт руководитель отдела. Проходить тест повторно не нужно.</div>`);
+}
+
+window.addEventListener('beforeunload', e => { if (S && S.idx > 0 && ls.get(LS_STATE)) { e.preventDefault(); e.returnValue = ''; } });
+boot();
+</script>
+</body>
+</html>
