@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <title>EasyCode · Аттестация сервиса</title>
+<link rel="preconnect" href="https://script.google.com" crossorigin>
+<link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -142,6 +144,7 @@ const PASSWORD  = 'attest2026';
 const FALLBACK_DEPTS = ['Онбординг','Забота КС','Расписание КС','Техподдержка','Возвраты','Менторы'];
 const LS_STATE = 'ec_srv3_state';
 const LS_PENDING = 'ec_srv3_pending';
+const LS_QCACHE = 'ec_srv3_qcache';
 
 /* ================= УТИЛИТЫ ================= */
 const $app = document.getElementById('app');
@@ -173,6 +176,7 @@ let QUESTIONS = [];      // [{id,b,t,q,a,opts:[{i,t}]}]
 let DEPTS = FALLBACK_DEPTS;
 let S = null;            // состояние попытки
 let loadError = '';
+let loaded = false, loadP = null;
 
 async function loadQuestions(){
   const url = SHEET_URL + '?type=questions&_=' + Date.now();
@@ -183,6 +187,7 @@ async function loadQuestions(){
       if (d.ok && d.questions && d.questions.length){
         QUESTIONS = d.questions;
         if (d.departments && d.departments.length) DEPTS = d.departments;
+        ls.set(LS_QCACHE, { questions: d.questions, departments: DEPTS });
         return true;
       }
       loadError = d.error || 'Пустой список вопросов';
@@ -197,17 +202,42 @@ function setWho(){ document.getElementById('who').textContent = S ? S.name : '';
 
 /* ================= СТАРТ ================= */
 async function boot(){
-  render('<div class="spinner"></div><p class="muted">Загружаем тест…</p>');
   const pending = ls.get(LS_PENDING);
   if (pending){ return sendResult(pending); }
-  const ok = await loadQuestions();
-  if (!ok){
-    return render(`<div class="eyebrow">Ошибка</div><h2>Не удалось загрузить вопросы</h2>
-      <p class="muted">${esc(loadError)}. Проверьте интернет и обновите страницу.</p>
-      <div class="actions"><button class="btn" onclick="location.reload()">Обновить</button></div>`);
+  // форму показываем сразу, вопросы грузятся в фоне
+  const cached = ls.get(LS_QCACHE);
+  if (cached && cached.questions && cached.questions.length){
+    QUESTIONS = cached.questions;
+    if (cached.departments && cached.departments.length) DEPTS = cached.departments;
   }
   const saved = ls.get(LS_STATE);
   showStart(saved && saved.attemptId ? saved : null);
+  loadP = loadQuestions().then(ok => { loaded = ok; if (ok) refreshStart(); return ok; });
+}
+
+/** Обновить список отделов и число вопросов на форме, когда пришли свежие данные */
+function refreshStart(){
+  const sel = document.getElementById('dept');
+  if (sel){
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">Выберите отдел</option>' + DEPTS.map(d => `<option value="${esc(d)}">${esc(d)}</option>`).join('');
+    if (DEPTS.indexOf(cur) >= 0) sel.value = cur;
+  }
+  const lc = document.getElementById('lead-count');
+  if (lc) lc.textContent = gradable().length + ' вопросов: ';
+}
+
+/** Дождаться вопросов (до 12 с); если сеть медленная — работаем по сохранённой копии */
+async function ensureQuestions(){
+  if (loaded) return true;
+  await Promise.race([loadP, sleep(12000)]);
+  if (loaded) return true;
+  return QUESTIONS.length > 0;
+}
+function busy(btn, on, label){
+  if (!btn) return;
+  if (on){ btn.dataset.label = btn.textContent; btn.textContent = label; btn.disabled = true; }
+  else { btn.textContent = btn.dataset.label || btn.textContent; btn.disabled = false; }
 }
 
 function showStart(saved){
@@ -215,10 +245,10 @@ function showStart(saved){
   render(`
     <div class="eyebrow">Аттестация · все отделы сервиса</div>
     <h1>Проверка знаний <em>регламентов</em></h1>
-    <p class="lead">${gradable().length} вопросов: теория по блокам, вопросы с выбором ответа и практические кейсы. Займёт около 40 минут. Прогресс сохраняется, если закрыть страницу.</p>
+    <p class="lead"><span id="lead-count">${QUESTIONS.length ? gradable().length + ' вопросов: ' : ''}</span>теория по блокам, вопросы с выбором ответа и практические кейсы. Займёт около 40 минут. Прогресс сохраняется, если закрыть страницу.</p>
     ${saved ? `<div class="resume">
         <div class="eyebrow" style="margin-bottom:6px">Незавершённая попытка</div>
-        <div style="margin-bottom:14px">${esc(saved.name)} · ${esc(saved.dept)} — остановились на шаге ${saved.idx+1} из ${QUESTIONS.length}</div>
+        <div style="margin-bottom:14px">${esc(saved.name)} · ${esc(saved.dept)} — остановились на шаге ${saved.idx+1}</div>
         <div class="actions" style="margin-top:0">
           <button class="btn" id="resume">Продолжить</button>
           <button class="btn ghost" id="reset">Начать заново</button>
@@ -239,17 +269,28 @@ function showStart(saved){
         <input class="input" id="pwd" type="password" autocomplete="off" placeholder="Выдал руководитель">
         <div class="hint" id="h-pwd"></div></div>
       <button class="btn block" id="go">Начать тест</button>
+      <div class="hint err" id="h-go"></div>
     </div>`);
 
   if (saved){
-    document.getElementById('resume').onclick = () => { S = saved; setWho(); step(); };
+    document.getElementById('resume').onclick = async (ev) => {
+      busy(ev.currentTarget, true, 'Загружаем…');
+      if (!(await ensureQuestions())) { busy(ev.currentTarget, false); return loadFail(); }
+      S = saved; setWho(); step();
+    };
     document.getElementById('reset').onclick = () => { if(confirm('Удалить незавершённую попытку и начать заново?')){ ls.del(LS_STATE); showStart(null); } };
   }
   document.getElementById('go').onclick = start;
   document.getElementById('pwd').addEventListener('keydown', e => { if(e.key==='Enter') start(); });
 }
 
-function start(){
+function loadFail(){
+  const h = document.getElementById('h-go');
+  if (h) h.textContent = 'Не удалось загрузить вопросы (' + loadError + '). Проверьте интернет и нажмите ещё раз.';
+  if (!loaded) loadP = loadQuestions().then(ok => { loaded = ok; if (ok) refreshStart(); return ok; });
+}
+
+async function start(){
   const v = id => document.getElementById(id).value.trim();
   const name = v('name').replace(/\s+/g,' ');
   let tg = v('tg').replace(/^https?:\/\/t\.me\//i,'').replace(/^@+/,'');
@@ -265,6 +306,10 @@ function start(){
   mark('dept', dept ? '' : 'Выберите отдел из списка');
   mark('pwd', pwd === PASSWORD ? '' : 'Неверный пароль');
   if (!ok) return;
+
+  const btn = document.getElementById('go');
+  busy(btn, true, 'Загружаем вопросы…');
+  if (!(await ensureQuestions())) { busy(btn, false); return loadFail(); }
 
   const orders = {};
   QUESTIONS.forEach(q => { if (q.t === 'choice') orders[q.id] = shuffle(q.opts.map(o => o.i)); });
